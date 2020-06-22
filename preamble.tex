@@ -1,0 +1,93 @@
+%%% Preamble with settings %%%
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\onehalfspacing
+
+%% ToDo notes %%
+\usepackage{todonotes}
+
+%% Bibliography %%%
+\usepackage[square,numbers]{natbib}
+\bibliographystyle{unsrt}
+
+\usepackage[nottoc]{tocbibind} % Includes "Bibliography" in contents
+
+\usepackage[acronym]{glossaries}
+\makeglossaries
+
+\usepackage{fontspec} % XeTeX
+\usepackage{xunicode} % Unicode для XeTeX
+\usepackage{xltxtra}  % Верхние и нижние индексы
+\usepackage{indentfirst} % Indented line after header
+
+\usepackage{listings} % Listings format settings
+\lstset{
+    basicstyle=\small\ttfamily, % Размер и тип шрифта
+    breaklines=true, % Перенос строк
+    tabsize=2, % Размер табуляции
+   frame=single,               % Рамка
+   literate={--}{{-{}-}}2,     % Корректно отображать двойной дефис
+   literate={---}{{-{}-{}-}}3  % Корректно отображать тройной дефис
+}
+
+% Шрифты, xelatex
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Times New Roman}
+\setmonofont{FreeMono}
+
+%% Graphics & Illustrations %%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}			% Images and additions inserting (to load graphics)
+\usepackage{wrapfig}			% integration of graphics with wraping text
+\usepackage{subfig}				% integration of multiple objects within a float
+\usepackage{pdfpages}			% PDF inserting, binds a graphic or page (.pdf or .jpg) in the document
+\usepackage{float}
+
+% Format of labels for figures and tables
+\usepackage{chngcntr}
+
+% Reset the counter for figures, tables in each Chapter
+\counterwithin{figure}{chapter}
+\counterwithin{table}{chapter}
+
+% Format of labels for theorems and definitions
+\usepackage{amssymb,amsfonts,amsmath, amsthm} % Maths
+\numberwithin{equation}{chapter} % Formules numbering chapter.number
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+\usepackage[numbers]{natbib}
+\usepackage[yyyymmdd,hhmmss]{datetime}
+\usepackage[ruled,vlined]{algorithm2e}
+
+%% HyperRef %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% http://www.tug.org/applications/hyperref/manual.html
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks, urlcolor={black}, % All links are black and clickable
+    linkcolor={black}, citecolor={black}, filecolor={black},
+    pdfauthor={Aigul Mardanova},
+    pdftitle={Identification of Trajectory Anomalies in Uncertain Spatiotemporal Data}
+}
+
+\sloppy             % Избавляемся от переполнений
+\hyphenpenalty=1000 % Частота переносов
+\clubpenalty=10000  % Запрещаем разрыв страницы после первой строки абзаца
+\widowpenalty=10000 % Запрещаем разрыв страницы после последней строки абзаца
+
+% Списки
+\usepackage{enumitem}
+\setlist[enumerate,itemize]{leftmargin=12.7mm} % Отступы в списках
+
+% Page number is bottom-right
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\rightmark}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\setcounter{page}{4} % Начало нумерации страниц

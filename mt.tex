@@ -1,0 +1,42 @@
+% Author: Aigul Mardanova (aigul.mardanova@tu-ilmenau.de)
+% https://github.com/aygulmardanova/mt-latex
+
+\documentclass[a4paper,12pt]{report}
+
+\input{preamble}
+\input{properties}
+
+\begin{document}
+
+\include{content/main-page}
+\include{content/abstract}
+
+\clearpage
+
+%%%%%%%%%CONTENT%%%%%%%%%
+\tableofcontents
+\pagenumbering{arabic}
+
+\include{content/abbreviations}
+\listoffigures
+\listoftables
+\listofalgorithms
+\include{content/1-introduction} 	% Intro., Pr. Stmnt, Thesis Strct.
+\include{content/2-bk} 				% Basic Knowledge
+\include{content/3-background} 		% Background and State of the Art
+\include{content/4-framework} 		% Framework
+\include{content/5-evaluation} 		% Evaluation and Experiments
+\include{content/6-conclusion} 		% Conclusion and Perspectives
+
+% Bibliography
+\bibliographystyle{plainurl}
+\bibliography{bibliography}
+
+\addcontentsline{toc}{chapter}{ToDo List}
+\listoftodos
+
+\pagenumbering{Roman}
+%%%%%%%%%%%END%%%%%%%%%%%
+
+\end{document}
+%%% Конец документа

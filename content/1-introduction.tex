@@ -1,0 +1,37 @@
+\chapter{Introduction}
+\label{ch:Introduction}
+
+Nowadays spatiotemporal (ST) data analytics plays an important role in different applications, based on Geographic Information Systems (GIS). Recent advances in GIS and, in particular, in GIS technologies and infrastructure have made cities smarter. And Intellectual Transport Systems (ITS) with urban traffic analysis are one of the most attractive applications in a smart city \cite{article:2_survey_urban}. Intelligence surveillance in smart cities has rapidly progressed in last decade \cite{article:9_trb_vc_aev_sc}. More and more roads and public areas are getting equipped with monitoring video cameras, amount of publicly available video data increases further \cite{article:4_detect_eatp}. Automatic analysis in Traffic Video Surveillance (TVS) receives increasingly more attention \cite{inproceedings:21_ad_dbscan_tvs}.
+
+Nowadays there are many tasks and applications of urban traffic analysis and, according to \cite{article:9_trb_vc_aev_sc}, tracking vehicles behavior using image processing of videos is one of the promising approaches. One of the main research approaches in urban traffic analysis, which works with data from monitoring video cameras, is mining frequent trajectory patterns from the ST data representing a traffic flow, because extracted trajectories can be afterwards applied to automatic visual surveillance, traffic management, suspicious activity detection, etc. \cite{article:5_survey_tbsa}. Another important sub-category of traffic analysis, which has become a commended task in many applications in smart cities, is an identification of trajectory anomalies \cite{article:9_trb_vc_aev_sc}. Anomaly is traditionally described as a data instance that remarkably deviates from the majority of data instances in a data set \cite{article:1_survey_stdm}. In TVS domain an anomalous activity refers to events violating the common rules \cite{inproceedings:21_ad_dbscan_tvs}. Such unusual traffic patterns, which do not conform to expected behavior, reflect abnormal traffic streams on road networks and thus provide useful, important and valuable information \cite{article:9_trb_vc_aev_sc}. For instance, when a traffic incident or jam happens, traffic flow changes suddenly, and this will be reflected by deviations from the normative activity patterns. That means that recognizing outliers can be useful in detecting traffic incidents. However, in the context of huge amounts of data to be processed, or information overload in other words, manual solutions are infeasible nowadays due to high complexity and high time consumption, and researchers look for automatic or semi-automatic intelligent methodologies to solve these tasks to minimize the required involvement of the human operator \cite{article:19_gbta_ubd_is}.
+
+As stated in recent researches in the field of traffic data analysis, it is significant in many applications, including ITS, to take into consideration uncertainty of data. The reasons of data uncertainty can be imprecisions in measurements and inexactitude of observations. In case of acquiring trajectory data from video enforcement cameras data uncertainty can be caused by limitations of used devices \cite{inproceedings:14_mpfstsp_gp_ud}.
+
+\section{Problem Statement}
+
+As it was mentioned above, ST data analytics plays an important role in everyday life, and the process of extracting useful information from ST data is one of the most significant challenges in traffic data mining. Since ST trajectory data is multi-dimensional and spatiotemporally related, traditional data mining approaches, proposed for static, single and independent data, are inefficient and inappropriate in that case \cite{article:8_review_mot_cl_alg}.
+
+The main purpose of the work in this thesis is to implement a framework for frequent trajectory patterns mining and identification of trajectory outliers in a three dimensional ST trajectory data, extracted from video surveillance cameras. The implemented method needs to be evaluated in terms of accuracy, performance, and suggest an improvement to increase the accuracy of results in context input data particularities. 
+
+In order to achieve the main objectives, following sub-tasks need to be performed:
+\begin{itemize}
+	\item Perform state-of-the-art review of existing approaches and choose a method to implement frequent trajectories extraction and anomalies detection;
+	\item Investigate and suggest an improvement of the chosen algorithm to increase accuracy of results for data from video surveillance cameras;
+	\item Implement a framework with the selected algorithm;
+	\item Perform evaluation of implemented algorithm in terms of performance and accuracy.
+\end{itemize}
+
+In this thesis, we will focus on following types of anomalies:
+\begin{itemize}
+	\item Anomalous trajectories with anomalous spatial information. This category covers trajectories with abnormal spatial behavior, such as illegal U-turns on the intersection, double solid line crossing, driving in an opposite direction.
+	\item Anomalous trajectories with anomalous spatio-temporal information. This type corresponds to situations where the spatial information can be considered as a normal, but adding a temporal information converts the trajectory into an abnormal one, for example: moving with an anomalously high or low speed, unexpected, emergency stops.
+\end{itemize}
+
+\section{Contribution}
+
+The main contribution of this work is ...
+\todo{include or not?}
+
+\section{Thesis Structure}
+
+The rest of this thesis work is structured as follows. The whole paper is organized into 6 parts. Chapter 2 introduces the background and terminologies used in the thesis work. Chapter 3 performs the State-of-the-art analysis of existing approaches. Chapter 4 presents the concept of an implemented framework, describes input data structure and input data processing and provides the detailed description of the implementation part. Chapter 5 presents experimental results and evaluation of implemented approach. Chapter 6 gives conclusion and discussions on possible further perspectives.
