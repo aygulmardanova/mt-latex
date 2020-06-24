@@ -107,7 +107,7 @@ In order to perform clustering, the similarity between two trajectories needs to
 \section{Distance and Similarity Measures}
 As it was mentioned before, clustering based approaches require a similarity measure to be defined between two trajectories. Apart from that, distance and similarity measures are also used to compare a trajectory with a cluster or a pair of clusters between each other. A similarity measure highly dependent on the format of a trajectory. A trajectory data, represented as a multidimensional data, can contain quantitative or qualitative features, continuous or binary. In such a classification, distance measure functions are more appropriate to work with continuous features, while similarity measures – with qualitative features \cite{article:23_survey_ca}. Input trajectory-vectors in this work contain spatial information along with temporal, which can be termed as qualitative continuous data. That means that distance measure functions are more appropriate in this case. Moreover, distance and similarity functions can be classified as 1) working with raw representations of trajectories without any preprocessing steps and 2) working with preprocessed trajectories representations. Preprocessing can include unifying the length of trajectories or reducing the dimensionality of trajectory-vectors \cite{inproceedings:7_related_work}. 
 
-State-of-the-art of existing similarity measures revealed following methods: Euclidean distance, DTW, LCSS, ..
+Some of the most known, widely used traditional similarity measures are following: Euclidean distance, Fréchet Distance, DTW, LCSS.
 
 \subsubsection{Euclidean distance}
 Euclidean distance between two trajectory vectors is calculated as a sum of squared differences of corresponding spatial coordinates \cite{article:27_vna_cad_td}:
@@ -116,40 +116,90 @@ Euclidean distance between two trajectory vectors is calculated as a sum of squa
 \end{equation}
 where both trajectories consist of \textit{m} tracking points and are represented by two-dimensional vectors $T_i = \{t_i^1, t_i^2, \ldots, t_i^m\}$ and $T_j = \{t_j^1, t_j^2, \ldots, t_j^m\}$. Tuples $(t_{i_x}^k, t_{i_y}^k)$ represent spatial coordinates for a \textit{k}-th tracking point of \textit{i}-th trajectory from a data set.
 
-However, Euclidean distance works only with trajectories with equal number of tracking points. Since usually vehicles move with different speed and behavior, trajectory length is always different and that means that raw trajectories need to be preprocessed and reduced to the same size \cite{inproceedings:7_related_work}. Also, traditional Euclidean distance is dependent on trajectory direction: the reversed direction can cause incorrect distance measurement, that in its turn leads to errors in clustering. Does require two-dimensional data.
+However, Euclidean distance works only with trajectories with equal number of tracking points. Since usually vehicles move with different speed and behavior, trajectory length is always different and that means that raw trajectories need to be preprocessed and reduced to the same size \cite{inproceedings:7_related_work}. Also, traditional Euclidean distance requires two-dimensional data, meaning that it is not able to process temporal information, and is dependent on the trajectory direction: the reversed direction can cause incorrect distance measurement, that in its turn leads to errors in clustering. Also, it fails while working with trajectories moving in a similar way but with different speeds and in the case of different sampling rates \cite{inproceedings:28_lcss_dsmt}.
 
+\subsubsection{Fréchet Distance}
+Fréchet Distance is based on Euclidean distance. It considers the positional and sequential relationship of trajectory points while calculating the similarity. The main idea of this approach is computing Euclidean distance for each pair of points from two trajectories and then designating the maximum Euclidean distance as a Fréchet Distance between them \cite{article:8_review_mot_cl_alg}\cite{inproceedings:29_fr_dist}. However, since only the maximum ammong distance is considered, the approach is sensitive to the presence of outliers.
 
 \subsubsection{DTW}
-Dynamic Time Warping (DTW) is one of the algorithms for measuring the similarity between two temporal time series sequences, which may vary in speed. The objective of time series comparison methods is to produce a distance metric between two input time series.
-\todo{finish description (DTW)}
+Dynamic Time Warping (DTW) is one of the algorithms for measuring the similarity between two temporal time series sequences, which may vary in speed. The objective of time series comparison methods is to produce a distance metric between them two. DTW method aims to find an alignment between time-dependent sequences, such as trajectories, and is able to process trajectories of different lengths \cite{article:8_review_mot_cl_alg}. 
+
+According to \cite{article:8_review_mot_cl_alg}, DTW distance is calculated as follows (Formula \ref{eq:dtw}):
+
+\begin{equation} \label{eq:dtw}
+	D_D(T_i, T_j) = 
+		\begin{cases}
+			0 				&\text{m = n = 0}\\
+			\infty 			&\text{m = 0 || n = 0}\\
+			dist(a_i^k, b_j^k) + min 
+				\begin{cases}
+					D_D(Rest(T_i), Rest(T_j))\\
+					D_D(Rest(T_i), T_j)\\
+					D_D(T_i, Rest(T_j))
+				\end{cases} &\text{others}
+		\end{cases}
+\end{equation}
+
+where $D_D(T_i, T_j)$ refers to DTW distance between two trajectory segments with lengths $m$ and $n$, $dist(a_i, b_j)$ means the Euclidean Distance between two trajectory points. Function $Rest(T_i)$ takes the remaining part of a trajectory after excluding the point $a_i$. It can be seen, that in case of zero-length trajectories the DTW distance is equal to 0, for the case then only one of two trajectories is non-empty, the distance between them is considered to be infinite. For two non-empty trajectories, the minimum distance between them is calculated in a recursive way.
+
+Though the important advantage of the DTW method is its ability to process trajectory vectors of distinct lengths, DTW distance is not robust to noise and requires trajectory points to be continuous. Also DTW distance computation is highly time consuming and complex due to necessity to compare distances between each pair of trajectories.
 
 \subsubsection{LCSS}
-Longest Common SubSequence (LCSS) distance…
-\todo{finish description (LCSS)}
+Longest Common SubSequence (LCSS) distance tries to match two trajectory sequences based on the longest common sub-sequence between them. The task of finding the longest common sub-sequence is usually solved recursively \cite{article:8_review_mot_cl_alg}. The basic idea of an LCSS distance is that it allows two trajectories to stretch. In comparison with a DTW and Euclidean distances, LCSS enables some elements to remain unmatched.
+
+The LCSS distance is calculated according to the Formula \ref{eq:dlcss} \cite{inproceedings:7_related_work}.
+
+\begin{equation} \label{eq:dlcss}
+	D_{LCSS}(T_1, T_2) = 1 - LCSS_{\delta, \epsilon}(T_1, T_2) / min(m, n)
+\end{equation}
+
+where $m$ and $n$ are lengths of trajectories $T_1$ and $T_2$ respectively. The $LCSS_{\delta, \epsilon}(T_1, T_2)$, the longest common sub-sequence between trajectories, represents the number of matched trajectory points between trajectories $T_1$ and $T_2$ and is defined as follows (Formula \ref{eq:lcss}):
+
+\begin{equation} \label{eq:lcss}
+	LCSS_{\delta, \epsilon}(T_1, T_2) = 
+		\begin{cases}
+			0 			&\text{if m = 0 or n = 0}\\
+						&\text{(if $|t_{1_{x,m}} - t_{2_{x,n}}| \textless \epsilon$}\\
+			1 + LCSS_{\delta, \epsilon}(Rest(T_1), Rest(T_2)) 
+						&\text{and $|t_{1_{y,m}} - t_{2_{y,n}}| \textless \epsilon$ }\\
+						&\text{and $|m - n| \le \delta$)}\\
+			max
+			\begin{cases}
+				LCSS_{\delta, \epsilon}(Rest(T_1), T_2)\\
+				LCSS_{\delta, \epsilon}(T_1, Rest(T_2))
+			\end{cases} &\text{otherwise}
+		\end{cases}
+\end{equation}
+
+LCSS calculation depends on two constant parameters: $\delta$ and $\epsilon$. Parameter $\delta$ defines the remoteness in time in which we can look to match a given point from one trajectory with another. Constant $\epsilon$ can take value between 0 and 1 and defines the size of proximity to look for matches. These parameters affect results significantly, therefore, the task of choosing the optimal values for them is challenging and important \cite{inproceedings:7_related_work}\cite{inproceedings:28_lcss_dsmt}. The $Rest(T)$ function is defined to return the last $M - 1$ points from the trajectory $T$.
+
+The LCSS distance is the most appropriate in this work, since it allows the trajectories to contain noise, have different length, objects speed and sampling rates (local time shifts in trajectories) \cite{inproceedings:7_related_work}. Moreover, among the aforementioned methods, the LCSS distance is the most robust approach against noises.
 
 
 \section{Related Work}
 The aforementioned objective has been investigated and solved in numerous works using different methods. Since in fact normal events are common and dominate the data, and abnormal events are rare and difficult to describe explicitly, many approaches are based on an unsupervised clustering of trajectories. For this thesis work the approach proposed by Ghrab, Fendri, Hammami in \cite{inproceedings:7_related_work} was chosen as a basis. It is focused on detection of abnormalities based on a trajectories clustering.
 
-The proposed approach consists of two phases (Fig. X):
+The proposed approach consists of two phases (\ref{fig:str}):
 \begin{itemize}
 	\item \textit{offline} to perform clustering and extract frequent trajectories, and
 	\item \textit{online} to classify the new trajectory as a normal or abnormal one.
 \end{itemize}
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.8\textwidth]{images/str.png}
+	\caption{Two-phased proposed approach}
+	\label{fig:str}
+\end{figure}
 
-\todo[inline]{Add structural image}
-Fig. X. Two-phased proposed approach
-
-The clustering is done in an unsupervised manner using an agglomerative hierarchical clustering algorithm operating on a distance matrix between trajectories. To perform clustering, the LCSS distance is used as a similarity measure. 
+The clustering is done in an unsupervised manner using an agglomerative hierarchical clustering algorithm operating on a distance matrix between trajectories. To perform clustering, the LCSS distance is used as a similarity measure. The details and formulas for the LCSS distance are given in the previous section.
 
 \subsubsection{Advantages}
 One of the advantages of the proposed method is that the chosen similarity measure does not require the trajectories to be of the same length, so that the preprocessing of the trajectories, which is a high complexity process, can be avoided. Moreover, the training data is allowed to contain normal trajectories as well as anomalous: algorithm will extract both normal and anomalous clusters. Dense clusters will represent normal trajectories classes, sparse clusters – anomalous trajectories classes.
 
-\todo[inline]{Give formulas from article}
-
 \subsubsection{Disadvantages}
 However, the disadvantage of the proposed method is that LCSS distance does not take into consideration such problems of video surveillance as a view perspective and a position of a moving object. 
 
+\subsubsection{Summary}
 This thesis work will be intended to investigate an opportunity of increasing the accuracy of results by making epsilon and sigma parameters, which are used to calculate the sigma, adaptable and dependent on the perspective and a distance from the camera. This includes:
 \begin{itemize}
 	\item exploring a functional dependency between epsilon and sigma parameters and a distance from the camera,

@@ -1,6 +1,12 @@
 \chapter{Basic Knowledge}
 \label{ch:Basic Knowledge (done)}
 
+
+\section{Input Data Sources}
+Tasks of frequent trajectories identification and outliers detection can be applied to different data sources, for example: GPS (Global Positioning System) devices and sensor networks, then trajectory data is collected by sensors on moving objects, which periodically transmit information about location over time, or video traffic surveillance cameras. This work will focus on working with latter type of input data sources.
+
+Video data from enforcement cameras is considered as a raw data and is not used directly as an input for implemented system. Raw video processing is done in a stand-alone tracking system. Tracking system takes raw video from enforcement cameras and handles it to perform the objects detection and converting the trajectory into a number of tracking points on images. Tracking points, containing such information as vehicle ID, timestamp, spatial coordinates, are used as an input.
+
 \section{Trajectory Definition}
 
 Trajectories can be described as multi-dimensional sequences containing a temporally ordered list of locations along with any additional information \cite{article:1_survey_stdm}. So, since a trajectory, denoted as $\tau$, represents consecutive positions of a moving target object in temporal domain, in a case of a single-camera surveillance data, it can be defined as:
@@ -40,8 +46,6 @@ The other way of trajectory outliers systematization may be dividing them into f
 
 In accordance with the second classification, the current work will focus on determining trajectory anomalies of the first and third types (spatial and spatiotemporal trajectory anomalies).
 
-\section{Input Data Sources}
-Tasks of frequent trajectories identification and outliers detection can be applied to different data sources, for example: GPS (Global Positioning System) devices and sensor networks, then trajectory data is collected by sensors on moving objects, which periodically transmit information about location over time, or video traffic surveillance cameras. This work will focus on working with latter type of input data sources.
 
 \section{Challenges}
 Since ST data differs from other types of data in many aspects, challenges are related to the used data type. A unique quality of it is that ST data instances are not independent and identically distributed, as it is usually assumed to be in many of existing data mining approaches. On the contrary, ST data instances, related to observations made by nearby locations and time, are structurally correlated with each other in context of space and time, and it is important to take into consideration the presence of dependencies among measurements in these dimensions. Consequently, many of the existing data mining approaches are not applicable to ST data, since ignoring the aforementioned characteristics can result in poor accuracy of results. This leads to the necessity of investigating and using different methods for processing such a data to preserve all the relations between information domains \cite{article:1_survey_stdm}.
