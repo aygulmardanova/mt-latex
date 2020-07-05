@@ -195,7 +195,7 @@ The clustering is done in an unsupervised manner using an agglomerative hierarch
 
 As it was already mentioned, hierarchical agglomerative clustering methods suppose clusters joining, which requires the inter-cluster distance measure to be defined. In \cite{inproceedings:7_related_work} authors have performed evaluation of different linkage methods, including single link, complete link and average link. According to the performed tests, the single link method showed the best results and, in view of this, will be used as a linkage method in the current work.
 
-Single link linkage method considers a minimum distance between two trajectories as an inter-cluster distance and can be summed up as:
+Single link linkage method considers a minimum distance between two trajectories as an inter-cluster distance and can be summed up as \cite{inproceedings:7_related_work}:
 
 \begin{equation} \label{eq:single_link}
 	D_{min}(C_i, C_j) = \min_{T_1 \in C_i, T_2 \in C_j} D_{LCSS}(T_1, T_2),
