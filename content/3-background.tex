@@ -112,14 +112,14 @@ Some of the most known, widely used traditional similarity measures are followin
 \subsubsection{Euclidean distance}
 Euclidean distance between two trajectory vectors is calculated as a sum of squared differences of corresponding spatial coordinates \cite{article:27_vna_cad_td}:
 \begin{equation}
-	d_i_j = ||T_i - T_j||_E = \sqrt{\sum_{k=1}^{m}((t_{i_x}^k - t_{i_x}^k)^2 + (t_{i_y}^k - t_{j_y}^k)^2)},
+	 d_{ij} = ||T_i - T_j||_E = \sqrt{\sum_{k=1}^{m}((t_{i_x}^k - t_{i_x}^k)^2 + (t_{i_y}^k - t_{j_y}^k)^2)},
 \end{equation}
 where both trajectories consist of \textit{m} tracking points and are represented by two-dimensional vectors $T_i = \{t_i^1, t_i^2, \ldots, t_i^m\}$ and $T_j = \{t_j^1, t_j^2, \ldots, t_j^m\}$. Tuples $(t_{i_x}^k, t_{i_y}^k)$ represent spatial coordinates for a \textit{k}-th tracking point of \textit{i}-th trajectory from a data set.
 
 However, Euclidean distance works only with trajectories with equal number of tracking points. Since usually vehicles move with different speed and behavior, trajectory length is always different and that means that raw trajectories need to be preprocessed and reduced to the same size \cite{inproceedings:7_related_work}. Also, traditional Euclidean distance requires two-dimensional data, meaning that it is not able to process temporal information, and is dependent on the trajectory direction: the reversed direction can cause incorrect distance measurement, that in its turn leads to errors in clustering. Also, it fails while working with trajectories moving in a similar way but with different speeds and in the case of different sampling rates \cite{inproceedings:28_lcss_dsmt}.
 
 \subsubsection{Fréchet Distance}
-Fréchet Distance is based on Euclidean distance. It considers the positional and sequential relationship of trajectory points while calculating the similarity. The main idea of this approach is computing Euclidean distance for each pair of points from two trajectories and then designating the maximum Euclidean distance as a Fréchet Distance between them \cite{article:8_review_mot_cl_alg}\cite{inproceedings:29_fr_dist}. However, since only the maximum ammong distance is considered, the approach is sensitive to the presence of outliers.
+Fréchet Distance is based on Euclidean distance. It considers the positional and sequential relationship of trajectory points while calculating the similarity. The main idea of this approach is computing Euclidean distance for each pair of points from two trajectories and then designating the maximum Euclidean distance as a Fréchet Distance between them \cite{article:8_review_mot_cl_alg}\cite{inproceedings:29_fr_dist}. However, since only the maximum among distance is considered, the approach is sensitive to the presence of outliers.
 
 \subsubsection{DTW}
 Dynamic Time Warping (DTW) is one of the algorithms for measuring the similarity between two temporal time series sequences, which may vary in speed. The objective of time series comparison methods is to produce a distance metric between them two. DTW method aims to find an alignment between time-dependent sequences, such as trajectories, and is able to process trajectories of different lengths \cite{article:8_review_mot_cl_alg}. 
@@ -145,9 +145,9 @@ where $D_D(T_i, T_j)$ refers to DTW distance between two trajectory segments wit
 Though the important advantage of the DTW method is its ability to process trajectory vectors of distinct lengths, DTW distance is not robust to noise and requires trajectory points to be continuous. Also DTW distance computation is highly time consuming and complex due to necessity to compare distances between each pair of trajectories.
 
 \subsubsection{LCSS}
-Longest Common SubSequence (LCSS) distance tries to match two trajectory sequences based on the longest common sub-sequence between them. The task of finding the longest common sub-sequence is usually solved recursively \cite{article:8_review_mot_cl_alg}. The basic idea of an LCSS distance is that it allows two trajectories to stretch. In comparison with a DTW and Euclidean distances, LCSS enables some elements to remain unmatched.
+Longest Common SubSequence (LCSS) distance tries to match two trajectory sequences based on the longest common sub-sequence between them. The task of finding the longest common sub-sequence is usually solved recursively \cite{article:8_review_mot_cl_alg}. The basic idea of an LCSS distance is that it allows two trajectories to stretch. In comparison with DTW and Euclidean distances, LCSS enables some elements to remain unmatched.
 
-The LCSS distance is calculated according to the Formula \ref{eq:dlcss} \cite{inproceedings:7_related_work}.
+The LCSS distance is calculated according to the Formula \ref{eq:dlcss} \cite{inproceedings:7_related_work}:
 
 \begin{equation} \label{eq:dlcss}
 	D_{LCSS}(T_1, T_2) = 1 - LCSS_{\delta, \epsilon}(T_1, T_2) / min(m, n)
@@ -171,7 +171,7 @@ where $m$ and $n$ are lengths of trajectories $T_1$ and $T_2$ respectively. The 
 		\end{cases}
 \end{equation}
 
-LCSS calculation depends on two constant parameters: $\delta$ and $\epsilon$. Parameter $\delta$ defines the remoteness in time in which we can look to match a given point from one trajectory with another. Constant $\epsilon$ can take value between 0 and 1 and defines the size of proximity to look for matches. These parameters affect results significantly, therefore, the task of choosing the optimal values for them is challenging and important \cite{inproceedings:7_related_work}\cite{inproceedings:28_lcss_dsmt}. The $Rest(T)$ function is defined to return the last $M - 1$ points from the trajectory $T$.
+As it can be seen, LCSS calculation depends on two constant parameters: $\delta$ and $\epsilon$. Parameter $\delta$ defines \textit{the maximum remoteness in terms of time between two trajectory points in which we can look to match a given point from one trajectory with another}. Constant $\epsilon$ can take value between 0 and 1 and defines the size of proximity to look for matches in terms of spatial information. Difference between $X-$ and $Y-$coordinates less than $\epsilon$ value means that points are relatively close to each other and can be considered as similar. LCSS distance is increased by 1 in this case. Parameters $\delta$ and $\epsilon$ affect results significantly, therefore, the task of choosing the optimal values for them is challenging and important \cite{inproceedings:7_related_work}\cite{inproceedings:28_lcss_dsmt}. The $Rest(T)$ function is defined to return the last $M - 1$ points from the trajectory $T$.
 
 The LCSS distance is the most appropriate in this work, since it allows the trajectories to contain noise, have different length, objects speed and sampling rates (local time shifts in trajectories) \cite{inproceedings:7_related_work}. Moreover, among the aforementioned methods, the LCSS distance is the most robust approach against noises.
 
@@ -191,7 +191,17 @@ The proposed approach consists of two phases (\ref{fig:str}):
 	\label{fig:str}
 \end{figure}
 
-The clustering is done in an unsupervised manner using an agglomerative hierarchical clustering algorithm operating on a distance matrix between trajectories. To perform clustering, the LCSS distance is used as a similarity measure. The details and formulas for the LCSS distance are given in the previous section.
+The clustering is done in an unsupervised manner using an agglomerative hierarchical clustering algorithm operating on a distance matrix between trajectories. To perform clustering, the LCSS distance is used as a similarity measure. The formulas and description of the LCSS distance are given in the previous section (Formulas \ref{eq:dlcss} -- \ref{eq:lcss}).
+
+As it was already mentioned, hierarchical agglomerative clustering methods suppose clusters joining, which requires the inter-cluster distance measure to be defined. In \cite{inproceedings:7_related_work} authors have performed evaluation of different linkage methods, including single link, complete link and average link. According to the performed tests, the single link method showed the best results and, in view of this, will be used as a linkage method in the current work.
+
+Single link linkage method considers a minimum distance between two trajectories as an inter-cluster distance and can be summed up as:
+
+\begin{equation} \label{eq:single_link}
+	D_{min}(C_i, C_j) = \min_{T_1 \in C_i, T_2 \in C_j} D_{LCSS}(T_1, T_2),
+\end{equation} 
+
+where ($C_i$, $C_j$) denote two clusters and ($T_1$, $T_2$) correspond to two trajectories from two clusters respectively.
 
 \subsubsection{Advantages}
 One of the advantages of the proposed method is that the chosen similarity measure does not require the trajectories to be of the same length, so that the preprocessing of the trajectories, which is a high complexity process, can be avoided. Moreover, the training data is allowed to contain normal trajectories as well as anomalous: algorithm will extract both normal and anomalous clusters. Dense clusters will represent normal trajectories classes, sparse clusters – anomalous trajectories classes.
