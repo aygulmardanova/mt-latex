@@ -67,6 +67,12 @@ Input data files have the following structure:
 
 As it can be seen from the input data file structure, each trajectory is represented by a two-element array, where first array stores coordinates as an array of two-tuples $(x_i^j, y_i^j)$ and second array contains timestamps for each spatial point in the corresponding order $(t_i)$. The extracted $x$- and $y$-coordinates correspond to pixels on input images. In Formula \ref{eq:input_str} the lower index of the spatial coordinates indicates the ordering number of a trajectory, while the upper index indicates the ordering number of a tracking point. The outer array refers to the array of trajectories.
 
-
 \subsection{Input Data Processing}
 Since chosen algorithm requires trajectories in a form of multi-dimensional vectors, the initial input data needs to be converted into the required form. For that reason, a custom parser was implemented. It takes a ‘txt’ file with trajectories as an input and as a result it returns a list of Trajectory objects. Trajectory object consists of a number of TrajectoryPoint objects with following information: \textit{x}-coordinate, \textit{y}-coordinate, time \textit{t}. The source code of the parsing method is presented in the Listing in Appendix chapter.
+
+\subsection{Similarity measure calculation}
+
+As it was mentioned before, LCSS measure will be used as a similarity measure. Consequently, LCSS distance will be calculated based on a LCSS similarity according to given formulas. 
+
+\lstset{style=code-style}
+\lstinputlisting[caption="LCSS calculation"]{listings/calcLCSS.java}
