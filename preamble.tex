@@ -32,9 +32,10 @@
 \definecolor{codegray}{rgb}{0.5, 0.5, 0.5}
 \definecolor{codeblue}{rgb}{0.2, 0.2, 0.6}
 \definecolor{backgray}{rgb}{0.94,0.94,0.94}
+\definecolor{codepurple}{rgb}{0.58, 0, 0.82}
 
-\lstdefinestyle{code-style}{
-	belowcaptionskip=1\baselineskip,
+\lstdefinestyle{code-style-java}{
+%	belowcaptionskip=1\baselineskip,			% skip 1 line after listing caption
 	xleftmargin=\parindent,
 	identifierstyle=\color{blue},
 	language=Java,								% the language of the code
@@ -45,7 +46,7 @@
 	stringstyle=\color{codepurple},				% string literal style
 	basicstyle=\small\ttfamily\footnotesize,	% Размер и тип шрифта, the size of the fonts that are used for the code
 	breakatwhitespace=false,         			% sets if automatic breaks should only happen at whitespace
-	breaklines=true,        					% Перенос строк, the size of the fonts that are used for the code       
+	breaklines=true,        					% Перенос строк
 	captionpos=lt,                    			% sets the caption-position to bottom               
 	keepspaces=true,    						% keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)             
 	numbers=left,                    			% where to put the line-numbers; possible values are (none, left, right)
@@ -60,6 +61,19 @@
 	literate={--}{{-{}-}}2,     % Корректно отображать двойной дефис
 	literate={---}{{-{}-{}-}}3,  % Корректно отображать тройной дефис
 	escapeinside={(*}{*)}
+}
+
+\lstdefinestyle{code-style-sql}{
+	language=SQL,
+	frame=ltrb,
+	framesep=5pt,
+	basicstyle=\normalsize,
+	keywordstyle=\ttfamily\color{OliveGreen},
+	identifierstyle=\ttfamily\color{CadetBlue}\bfseries, 
+	commentstyle=\color{Brown},
+	stringstyle=\ttfamily,
+	showstringspaces=true,
+	escapeinside={<--}{-->}
 }
 
 %\lstset{style=mystyle-pseudo}
@@ -91,11 +105,26 @@
 \newtheorem{definition}{Definition}
 
 \usepackage[yyyymmdd,hhmmss]{datetime}
-\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[ruled,vlined]{algorithm2e} 		% algochapter
+
+\renewcommand*{\lstlistlistingname}{List of Listings}
+
+
+%%%% Joining Algorithms and Listings into one %%%
+%\makeatletter
+%\AtBeginDocument{%
+%	\renewcommand\lstlistlistingname{Algorithms and Listings}
+%	\let\c@algocf\c@lstlisting
+%}
+%\renewcommand{\algocf@list}{lol}%
+%\renewcommand*\l@algocf{\@dottedtocline{1}{1.5em}{2.3em}}
+%\makeatother
+%%%%%%%%
 
 %% HyperRef %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % http://www.tug.org/applications/hyperref/manual.html
-\usepackage{hyperref}
+\usepackage[breaklinks]{hyperref}
+\def\UrlBreaks{\do-\do/\do.}
 \hypersetup{
     colorlinks, urlcolor={black}, % All links are black and clickable
     linkcolor={black}, citecolor={black}, filecolor={black},
@@ -111,6 +140,10 @@
 % Списки
 \usepackage{enumitem}
 \setlist[enumerate,itemize]{leftmargin=12.7mm} % Отступы в списках
+
+% Appendices
+\usepackage[toc,page]{appendix}
+%\renewcommand{\appendixtocname}{\appendixpagename} 
 
 % Page number is bottom-right
 \usepackage{fancyhdr}

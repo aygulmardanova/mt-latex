@@ -1,0 +1,30 @@
+/**
+* Calculates average speed for the trajectory in 'pixels per sec'
+*/
+public double calcSpeed(Trajectory t) {
+	double dist = 0.0;
+	for (int i = 0; i < t.length() - 1; i++) {
+		dist += t.get(i).distanceTo(t.get(i + 1));
+	}
+	
+	double time = (t.get(length() - 1).getTime() - t.get(0).getTime()) * interFrameTime;
+	
+	double avgSpeed = dist / time;
+	return avgSpeed;
+}
+
+/**
+* Calculates the Euclidean distance between two trajectory points
+* 
+* @param this      first (current) trajectory point
+* @param other     second trajectory point
+* @return          Euclidean distance
+*/
+public double distanceTo(TrajectoryPoint other) {
+	if (this == other) {
+		return 0;
+	}
+	double d = Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2);
+	return Math.sqrt(d);
+}
+

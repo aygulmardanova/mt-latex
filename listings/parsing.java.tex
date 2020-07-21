@@ -1,0 +1,184 @@
+package ru.griat.rcse.parsing;
+
+import ru.griat.rcse.entity.Trajectory;
+import ru.griat.rcse.entity.TrajectoryPoint;
+import ru.griat.rcse.exception.TrajectoriesParserException;
+import org.apache.commons.io.FilenameUtils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+/*
+* Parser to parse input trajectories from text file
+* 
+* stop symbols:
+* if meet number - read until ']' or ',' or ')'
+* [ - check for next, if [ - check for next, if [ - isX=true, if value - save x,
+* */
+public class TrajectoriesParser {
+	
+	private int openingSqBracketNumber;
+	
+	private boolean trajectoryStarted = false;
+	private boolean trajectoryCoordinatesStarted = false;
+	private int indexOfT;
+	private int indexOfTP;
+	
+	private StringBuilder x;
+	private StringBuilder y;
+	private StringBuilder t;
+	
+	private List<TrajectoryPoint> trajectoryPoints;
+	private List<Trajectory> trajectories;
+	
+	public TrajectoriesParser() {
+		openingSqBracketNumber = 0;
+		indexOfT = 0;
+		indexOfTP = 0;
+		
+		x = new StringBuilder();
+		y = new StringBuilder();
+		t = new StringBuilder();
+		
+		trajectoryPoints = new ArrayList<>();
+		trajectories = new ArrayList<>();
+	}
+
+	/**
+	* Parses input 'txt'-file
+	* 
+	* @param fileName  full path to the input data file with trajectories
+	* @return          list of extracted trajectories
+	*/
+	public List<Trajectory> parseTxt(String fileName) throws IOException, TrajectoriesParserException {
+		
+		InputStream reader = new FileInputStream(FilenameUtils.normalize(fileName));
+		int intch;
+		while ((intch = reader.read()) != -1) {
+			char nextChar = (char) intch;
+			while ((nextChar == ',' || nextChar == ' '))
+			nextChar = (char) reader.read();
+			while (nextChar == '[') {
+				increaseOpeningSqBracketsCount();
+				nextChar = (char) reader.read();
+			}
+			while (trajectoryCoordinatesStarted) {
+				if (nextChar == '(') {
+					readCoordinates(reader);
+				}
+				nextChar = (char) reader.read();
+				if (nextChar == ']') {
+					increaseClosingSqBracketsCount();
+				}
+			}
+			nextChar = (char) reader.read();
+			while ((nextChar == ',' || nextChar == ' '))
+			nextChar = (char) reader.read();
+			if (trajectoryStarted) {
+				if (nextChar == '[') {
+					increaseOpeningSqBracketsCount();
+					readTime(reader);
+				} else {
+					throw new TrajectoriesParserException("After coordinates array with timestamps was expected");
+				}
+				finishProcessingTrajectory();
+			}
+		}
+		
+		reader.close();
+		return trajectories;
+	}
+	
+	private void processBracketsCount() {
+		if (openingSqBracketNumber == 1) {
+			trajectoryStarted = false;
+			trajectoryCoordinatesStarted = false;
+		}
+		if (openingSqBracketNumber == 2) {
+			trajectoryStarted = true;
+			trajectoryCoordinatesStarted = false;
+		}
+		if (openingSqBracketNumber == 3) {
+			trajectoryCoordinatesStarted = true;
+		}
+	}
+
+  /**
+	* Reads an x and y values from file after '(' and before next ')'
+	*/	
+	private void readCoordinates(InputStream reader) throws IOException {
+		char nextChar = (char) reader.read();
+		while (nextChar != ',') {
+			if (nextChar >= '0' && nextChar <= '9')
+			x.append(nextChar);
+			nextChar = (char) reader.read();
+		}
+		while (nextChar != ')') {
+			if (nextChar >= '0' && nextChar <= '9')
+			y.append(nextChar);
+			nextChar = (char) reader.read();
+		}
+		processTrajectoryPoint();
+	}
+	
+	/**
+	* Reads time and saves it into already initialized trajectory by updating trajectoryPoint at indexOfTP position in a current trajectory
+	*/	
+	private void readTime(InputStream reader) throws IOException {
+		char nextChar = (char) reader.read();
+		while (nextChar != ']') {
+			while (nextChar != ',' && nextChar != ']') {
+				t.append(nextChar);
+				nextChar = (char) reader.read();
+			}
+			if (nextChar == ']') {
+				increaseClosingSqBracketsCount();
+			}
+			trajectoryPoints.get(indexOfTP).setTime(Integer.parseInt(t.toString().trim()));
+			indexOfTP++;
+			t = new StringBuilder();
+			nextChar = (char) reader.read();
+		}
+	}
+	
+	private void increaseOpeningSqBracketsCount() {
+		openingSqBracketNumber++;
+		processBracketsCount();
+	}
+	
+	private void increaseClosingSqBracketsCount() {
+		openingSqBracketNumber--;
+		processBracketsCount();
+	}
+	
+	/**
+	* Adds parsed trajectory into an array of output trajectories and prepares for the next input trajectory by resetting to 0 indexes and buffers
+	*/
+	private void finishProcessingTrajectory() {
+		trajectories.add(new Trajectory(indexOfT, trajectoryPoints));
+		trajectoryPoints = new ArrayList<>();
+		indexOfT++;
+		indexOfTP = 0;
+		trajectoryStarted = false;
+		increaseClosingSqBracketsCount();
+	}
+
+	/**
+	* Creates a new TrajectoryPoint with collected x and y
+	* Clear the buffer
+	*/		
+	private void processTrajectoryPoint() {
+		TrajectoryPoint point = new TrajectoryPoint(
+			Integer.parseInt(x.toString().trim()),
+			Integer.parseInt(y.toString().trim())
+		);
+		trajectoryPoints.add(point);
+		
+		x = new StringBuilder();
+		y = new StringBuilder();
+	}
+	
+}

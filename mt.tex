@@ -20,9 +20,12 @@
 \include{content/abbreviations}
 \listoffigures
 \listoftables
+\clearpage
 
+\listofalgorithms
+\addcontentsline{toc}{chapter}{List of Algorithms}
 \lstlistoflistings
-\addcontentsline{toc}{chapter}{Listings}
+\addcontentsline{toc}{chapter}{List of Listings}
 
 \include{content/1-introduction} 	% Intro., Pr. Stmnt, Thesis Strct.
 \include{content/2-bk} 				% Basic Knowledge
@@ -34,12 +37,16 @@
 
 % Bibliography
 \bibliography{bibliography}
+\clearpage
 
 \listoftodos
 \addcontentsline{toc}{chapter}{ToDo List}
 
 \pagenumbering{Roman}
 %%%%%%%%%%%END%%%%%%%%%%%
+
+%\appendix
+\include{content/appendix}
 
 \end{document}
 %%% Конец документа

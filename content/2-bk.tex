@@ -1,6 +1,7 @@
 \chapter{Basic Knowledge}
-\label{ch:Basic Knowledge (done)}
+\label{ch:Basic Knowledge}
 
+This chapter is intended to give a background information, introduce useful definitions and basic concepts of approaches used in following chapters. Input data sources and related challenges will be discussed.
 
 \section{Input Data Sources}
 Tasks of frequent trajectories identification and outliers detection can be applied to different data sources, for example: GPS (Global Positioning System) devices and sensor networks, then trajectory data is collected by sensors on moving objects, which periodically transmit information about location over time, or video traffic surveillance cameras. This work will focus on working with latter type of input data sources.
@@ -24,13 +25,13 @@ Twenty-four-hour recording video surveillance cameras produce massive amounts of
 	``An outlying observation, or outlier, is one that appears to deviate markedly from other members of the sample in which it occurs''.
 \end{quote}
 
-Trajectory anomalies can be described as traffic flow patterns, which significantly deviate from some normal behavior pattern or, in other words, inconsistent with the rest of traffic behavioral patterns.
+Trajectory anomalies can be described as traffic flow patterns, which significantly deviate from some normal behavior pattern or, in other words, inconsistent with the rest of traffic behavioral patterns. Anomalous trajectories are supposed to have great local or global difference with the majority of trajectories in terms of a chosen similarity metric \cite{article:over_tod}.
  
 The process of outlier detection is intended to reveal unusual patterns that drastically differ from majority of samples in order to process them further in an appropriate way \cite{article:11_eod_hdd}. Also anomalous to normality activity patterns ratio should be relatively small in order to be able to distinguish abnormalities from the dominating normal patterns.
 
 \subsection{Trajectory Anomalies Classification}
 
-According to the literature, trajectory anomalies can be categorized as follows \cite{article:15_survey_ad}\cite{article:6_survey_anom_det_rtuvs}:
+According to the literature, trajectory anomalies can be categorized as follows \cite{article:15_survey_ad}\cite{article:6_survey_anom_det_rtuvs}\cite{article:comp_analys_odt}:
 \begin{itemize}
 	\item \textit{Point anomaly} - represents the simplest type of anomalies. Corresponds to an individual data instance which is considered as an abnormal one with respect to the rest of data, since it deviates significantly from all other samples in a data set. For example, a non-moving car on a busy road.
 	\item \textit{Contextual anomaly} - corresponds to a data instance which is considered as anomalous in a specific context, but as normal otherwise. It can be also understood as a point anomaly in a neighboring of the data point itself. Contextual anomalies are also referred as conditional anomalies and represent the most common group of categories applicable to spatial and time-series data. For example, trajectories can be classified based on the spatial data (coordinates) in the scope of a time. Examples of a contextual anomaly may be trajectories of a vehicle moving with a much higher speed comparing to others in the same traffic flow or of a vehicle driving in the opposite direction.
