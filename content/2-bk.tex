@@ -10,9 +10,9 @@ Video data from enforcement cameras is considered as a raw data and is not used 
 
 \section{Trajectory Definition}
 
-Trajectories can be described as multi-dimensional sequences containing a temporally ordered list of locations along with any additional information \cite{article:1_survey_stdm}. So, since a trajectory, denoted as $\tau$, represents consecutive positions of a moving target object in temporal domain, in a case of a single-camera surveillance data, it can be defined as:
+Trajectories can be described as multi-dimensional sequences containing a temporally ordered list of locations along with any additional information \cite{article:1_survey_stdm}. So, since a trajectory, denoted as $\tau$ or $T$, represents consecutive positions of a moving target object in temporal domain, in a case of a single-camera surveillance data, it can be defined as:
 \begin{equation}
-	\tau={(x_1, y_1, t_1), (x_2, y_2, t_2), \ldots, (x_n, y_n, t_n)}\\[3pt],
+	\tau = {(x_1, y_1, t_1), (x_2, y_2, t_2), \ldots, (x_n, y_n, t_n)}\\[3pt],
 \end{equation}
 where $(x_i, y_i)$ denotes the position of the target object in the image at time $t_i$ \cite{article:5_survey_tbsa}. According to this, trajectories can be represented as a sequence of 3D points, where 2D object is for geometric coordinates and the third dimension stores the time \cite{article:25_dhr_mvt_eesd}.
 
@@ -50,6 +50,8 @@ In accordance with the second classification, the current work will focus on det
 
 \section{Challenges}
 Since ST data differs from other types of data in many aspects, challenges are related to the used data type. A unique quality of it is that ST data instances are not independent and identically distributed, as it is usually assumed to be in many of existing data mining approaches. On the contrary, ST data instances, related to observations made by nearby locations and time, are structurally correlated with each other in context of space and time, and it is important to take into consideration the presence of dependencies among measurements in these dimensions. Consequently, many of the existing data mining approaches are not applicable to ST data, since ignoring the aforementioned characteristics can result in poor accuracy of results. This leads to the necessity of investigating and using different methods for processing such a data to preserve all the relations between information domains \cite{article:1_survey_stdm}.
+
+\subsubsection{Data uncertainty}
 
 It should be noted that the chosen type of an input source leads to difficulties in processing. Since trajectory data is acquired by video enforcement cameras, the first problem is an uncertainty of a location as a result of limitations in measurement accuracy of the used cameras, resolution and the quality of the received images or frame jitter \cite{article:4_detect_eatp}. Moreover, enforcement cameras are placed at some fixed locations on an intersection, because of that one of the particularities of used data are pose and perspective, which can cause challenges while dealing with input video data \cite{article:6_survey_anom_det_rtuvs}. The view angle of the camera in respect to the scene ground plane and distance between the tracked object and camera can affect the performance by decreasing the accuracy of objects detection and tracking: the smaller the angle - the bigger is the problem of determining the center of an object \cite{article:9_trb_vc_aev_sc}\cite{article:4_detect_eatp}. Tracked objects can drive in and out of the camera view, but be still detected while partially visible. This can cause trajectory changes on the borders of the camera scene: displacing and shifting of vehicle trajectories depending on the location of an object in respect to the camera \cite{article:4_detect_eatp}. Quality of the performed trajectory analysis also depends on the input trajectory data, including: quality of used cameras, quality of a tracking system, which converts a video data into a list of trajectories consisting of tracking points.
 

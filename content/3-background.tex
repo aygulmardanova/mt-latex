@@ -4,7 +4,7 @@
 This chapter presents state of the art analysis of existing approaches and discuss advantages and disadvantages of existing approaches. Each section is concluded with a summary, in which the chosen approach is specified and a short argumentation is given.
 
 \section{Anomalies Detection Techniques}
-According to \cite{article:15_survey_ad}, the task of outliers detection, which is a main objective task of this work, has been an object of interest and studies of research community originating from 19\up{th} Century. Nowadays a huge variety of different techniques for solving the task of detecting outliers and abnormalities in video traffic data are presented, and these approaches can be classified in various ways.
+According to \cite{article:15_survey_ad}, the task of outliers detection, which is a main objective task of this work, has been an object of interest and studies of research community originating from $19\up{th}$ Century. Nowadays a huge variety of different techniques for solving the task of detecting outliers and abnormalities in video traffic data are presented, and these approaches can be classified in various ways.
 
 For example, data mining techniques in general and anomaly detection techniques as well as clustering approaches, which are one of the ways to solve the task of outliers identification, particularly can be classified as supervised, semi-supervised and unsupervised on the grounds of the manner of labeling the input data] \cite{article:15_survey_ad}\cite{article:comp_analys_odt}:
 \begin{enumerate}
@@ -120,9 +120,9 @@ Based on the given description of clustering approaches, their limitations, adva
 \section{Distance and Similarity Measures}
 As it was mentioned before, clustering based approaches require a similarity measure to be defined between two trajectories. Apart from that, distance and similarity measures are also used to compare a trajectory with a cluster or a pair of clusters between each other. A similarity measure highly dependent on the format of a trajectory. A trajectory data, represented as a multidimensional data, can contain quantitative or qualitative features, continuous or binary. In such a classification, distance measure functions are more appropriate to work with continuous features, while similarity measures – with qualitative features \cite{article:23_survey_ca}. Input trajectory-vectors in this work contain spatial information along with temporal, which can be termed as qualitative continuous data. That means that distance measure functions are more appropriate in this case. Moreover, distance and similarity functions can be classified as 1) working with raw representations of trajectories without any preprocessing steps and 2) working with preprocessed trajectories representations. Preprocessing can include unifying the length of trajectories or reducing the dimensionality of trajectory-vectors \cite{inproceedings:7_related_work}. 
 
-Some of the most known and widely used traditional similarity measures are following: Euclidean distance, Fréchet Distance, DTW, LCSS.
+Some of the most known and widely used traditional similarity measures are following: Euclidean Distance, Fréchet Distance, DTW, LCSS.
 
-\subsubsection{Euclidean distance}
+\subsubsection{Euclidean Distance}
 Euclidean distance between two trajectory vectors is calculated as a sum of squared differences of corresponding spatial coordinates \cite{article:27_vna_cad_td}:
 \begin{equation}
 	 d_{ij} = ||T_i - T_j||_E = \sqrt{\sum_{k=1}^{m}((t_{i_x}^k - t_{i_x}^k)^2 + (t_{i_y}^k - t_{j_y}^k)^2)},
@@ -197,7 +197,8 @@ Parameters $\delta$ and $\epsilon$ affect results significantly, therefore, the 
 \subsubsection{Summary}
 The LCSS distance is the most appropriate in this work, since it allows the trajectories to contain noise, have different length, objects speed and sampling rates (local time shifts in trajectories) \cite{inproceedings:7_related_work}. Moreover, among the aforementioned methods, the LCSS distance is the most robust approach against noises.
 
-\section{Related Work}
+\section{Summary}
+\subsubsection{Related Approach}
 The aforementioned objective has been investigated and solved in numerous works using different methods. Since in fact normal events are common and dominate the data, and abnormal events are rare and difficult to describe explicitly, many approaches are based on an unsupervised clustering of trajectories. For this thesis work the approach proposed by Ghrab, Fendri, Hammami in \cite{inproceedings:7_related_work} was chosen as a basis. It is focused on detection of abnormalities based on a trajectories clustering.
 
 The proposed approach can be described as a two-phase approach with offline clustering to extract frequent trajectories and an online classification of an input trajectory to label it as a normal or anomalous.

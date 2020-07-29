@@ -14,29 +14,38 @@
 \clearpage
 
 %%%%%%%%%CONTENT%%%%%%%%%
-\tableofcontents
 \pagenumbering{arabic}
+\tableofcontents
 
 \include{content/abbreviations}
-\listoffigures
-\listoftables
-\clearpage
-
-\listofalgorithms
-\addcontentsline{toc}{chapter}{List of Algorithms}
-\lstlistoflistings
-\addcontentsline{toc}{chapter}{List of Listings}
 
 \include{content/1-introduction} 	% Intro., Pr. Stmnt, Thesis Strct.
 \include{content/2-bk} 				% Basic Knowledge
 \include{content/3-background} 		% Background and State of the Art
 %\include{content/31-toolkits}
-\include{content/4-framework} 		% Framework
-\include{content/5-evaluation} 		% Evaluation and Experiments
-\include{content/6-conclusion} 		% Conclusion and Perspectives
+\include{content/4-concept} 		% Framework Conceptual Model (Suggested Approach)
+\include{content/5-framework}		% Framework
+\include{content/6-evaluation} 		% Evaluation and Experiments
+\include{content/7-conclusion} 		% Conclusion and Perspectives
 
 % Bibliography
 \bibliography{bibliography}
+\clearpage
+
+\listoffigures
+\clearpage
+\listoftables
+
+
+
+\listofalgorithms
+\addcontentsline{toc}{chapter}{List of Algorithms}
+
+\begingroup
+\let\clearpage\relax
+\lstlistoflistings
+\endgroup
+\addcontentsline{toc}{chapter}{List of Listings}
 \clearpage
 
 \listoftodos

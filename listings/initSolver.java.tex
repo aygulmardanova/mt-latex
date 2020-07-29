@@ -1,0 +1,21 @@
+BaseAbstractUnivariateSolver bisectionSolver = new BisectionSolver();
+BaseAbstractUnivariateSolver laguerreSolver = new LaguerreSolver();
+
+for (Polynomial derivativeFunc : 
+			List.of(derivativeFuncX1, derivativeFuncX2, 
+					derivativeFuncY1, derivativeFuncY2)) {
+
+		for (BaseAbstractUnivariateSolver solver : 
+					List.of(bisectionSolver, laguerreSolver)) {
+			solver.solve(30000, derivativeFunc,
+					currentTr.getTrajectoryPoints().stream()
+						.mapToInt(TrajectoryPoint::getTime)
+						.min().getAsInt(),
+					currentTr.getTrajectoryPoints().stream()
+						.mapToInt(TrajectoryPoint::getTime)
+						.max().getAsInt(),
+					currentTr.getTrajectoryPoints().stream()
+						.mapToInt(TrajectoryPoint::getTime)
+						.min().getAsInt() + 1);
+		}
+}

@@ -1,0 +1,56 @@
+// initialization
+double[] t, x, y;
+int degree = 3;
+double thresholdR2 = 0.97;
+double minR2forX = 1.0, minR2forY = 1.0;
+int minR2forXid = -1, minR2forYid = -1;
+
+Invocation of the polynomial regression for each trajectory
+for (int tId = 0; tId < trajectories.size(); tId++) {
+	PolynomialRegression regressionX;
+	PolynomialRegression regressionY;
+	
+	Trajectory currentTr = trajectories.get(tId);
+	t = currentTr.getTrajectoryPoints().stream()
+		.mapToDouble(TrajectoryPoint::getTime).toArray();
+	x = currentTr.getTrajectoryPoints().stream()
+		.mapToDouble(TrajectoryPoint::getX).toArray();
+	y = currentTr.getTrajectoryPoints().stream()
+		.mapToDouble(TrajectoryPoint::getY).toArray();
+	regressionX = new PolynomialRegression(t, x, degree);
+	regressionY = new PolynomialRegression(t, y, degree);		
+
+//	  if regression results are not satisfactory (means that degree of polynomial is not enough)
+//    try to obtain an equation with a higher degree
+	if (regressionX.R2() < thresholdR2)
+		regressionX = new PolynomialRegression(t, x, degree + 1);
+	if (regressionY.R2() < thresholdR2)
+		regressionY = new PolynomialRegression(t, y, degree + 1);
+		
+	currentTr.setRegressionX(regressionX);
+	currentTr.setRegressionY(regressionY);
+
+//    calculation of minimum (*$R^2$*)
+	if (regressionX.R2() < minR2forX) {
+		minR2forX = regressionX.R2();
+		minR2forXid = tId;
+	}
+	if (regressionY.R2() < minR2forY) {
+		minR2forY = regressionY.R2();
+		minR2forYid = tId;
+	}
+}
+
+// calculation of average (*$R^2$*)
+double avgR2forX = trajectories.stream()
+	.mapToDouble(tr -> tr.getRegressionX().R2())
+	.average().getAsDouble();
+double avgR2forY = trajectories.stream()
+	.mapToDouble(tr -> tr.getRegressionY().R2())
+	.average().getAsDouble();
+
+// print results
+LOGGER.info("min R2 for X is for trajectory {}: {}", minR2forXid, minR2forX);
+LOGGER.info("avg R2 for X is: {}", avgR2forX);
+LOGGER.info("min R2 for Y is for trajectory {}: {}", minR2forYid, minR2forY);
+LOGGER.info("avg R2 for Y is: {}", avgR2forY);

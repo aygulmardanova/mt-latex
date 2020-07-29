@@ -1,0 +1,34 @@
+// an input image with a resolution 1280*720 -> pixels for X in [0, 1280], pixels for Y in [0, 720]
+double minX = 1280, maxX = 0, minY = 720, maxY = 0;
+int tForMinX = 0, tForMaxX = 0, tForMinY = 0, tForMaxY = 0;
+for (int time : currentTr.getTrajectoryPoints().stream()
+			.mapToInt(TrajectoryPoint::getTime)
+			.boxed().collect(toList())) {
+	double predictedX = currentTr.getRegressionX()
+							.predict(time);
+	double predictedY = currentTr.getRegressionY()
+							.predict(time);
+	if (predictedX < minX) {
+		minX = predictedX;
+		tForMinX = time;
+	}
+	if (predictedX > maxX) {
+		maxX = predictedX;
+		tForMaxX = time;
+	}
+	if (predictedY < minY) {
+		minY = predictedY;
+		tForMinY = time;
+	}
+	if (predictedY > maxY) {
+		maxY = predictedY;
+		tForMaxY = time;
+	}
+}
+
+for (int tt : List.of(tForMinX,tForMaxX,tForMinY,tForMaxY)) {
+	currentTr.addKeyPoint(new TrajectoryPoint(
+		(int) Math.round(currentTr.getRegressionX().predict(tt)),
+		(int) Math.round(currentTr.getRegressionY().predict(tt)),
+		tt));
+}

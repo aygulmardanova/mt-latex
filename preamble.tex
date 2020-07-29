@@ -5,6 +5,11 @@
 \usepackage{setspace}
 \onehalfspacing
 
+\usepackage[compact]{titlesec}
+\titleformat{\chapter}
+{\normalfont\LARGE\bfseries}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+
 \let\up\textsuperscript
 
 %% ToDo notes %%
@@ -16,9 +21,6 @@
 
 \usepackage[nottoc]{tocbibind} % Includes "Bibliography" in contents
 
-\usepackage[acronym]{glossaries}
-\makeglossaries
-
 \usepackage{fontspec} % XeTeX
 \usepackage{xunicode} % Unicode для XeTeX
 \usepackage{xltxtra}  % Верхние и нижние индексы
@@ -27,11 +29,13 @@
 %% Listings %%%
 \usepackage{listings} % Listings format settings
 \usepackage{xcolor}
+\usepackage{color, colortbl}
 
 \definecolor{codegreen}{rgb}{0, 0.6, 0}
 \definecolor{codegray}{rgb}{0.5, 0.5, 0.5}
 \definecolor{codeblue}{rgb}{0.2, 0.2, 0.6}
 \definecolor{backgray}{rgb}{0.94,0.94,0.94}
+\definecolor{nogray}{rgb}{0.97, 0.97, 0.97}
 \definecolor{codepurple}{rgb}{0.58, 0, 0.82}
 
 \lstdefinestyle{code-style-java}{
@@ -86,12 +90,19 @@
 %% Graphics & Illustrations %%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}			% Images and additions inserting (to load graphics)
 \usepackage{wrapfig}			% integration of graphics with wraping text
-\usepackage{subfig}				% integration of multiple objects within a float
+%\usepackage{subfig}				% integration of multiple objects within a float
 \usepackage{pdfpages}			% PDF inserting, binds a graphic or page (.pdf or .jpg) in the document
 \usepackage{float}
+\usepackage[section]{placeins}
 
 % Format of labels for figures and tables
 \usepackage{chngcntr}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\usepackage[tableposition=top]{caption}
+\usepackage{subcaption}
 
 % Reset the counter for figures, tables in each Chapter
 \counterwithin{figure}{section}
@@ -141,9 +152,8 @@
 \usepackage{enumitem}
 \setlist[enumerate,itemize]{leftmargin=12.7mm} % Отступы в списках
 
-% Appendices
+% Appendix
 \usepackage[toc,page]{appendix}
-%\renewcommand{\appendixtocname}{\appendixpagename} 
 
 % Page number is bottom-right
 \usepackage{fancyhdr}
@@ -154,4 +164,6 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
 
-\setcounter{page}{4} % Начало нумерации страниц
+
+%\renewcommand{\chaptermark}[1]{ \markboth{#1}{} }
+%\renewcommand{\sectionmark}[1]{ \markright{#1} }
