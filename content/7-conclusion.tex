@@ -1,7 +1,8 @@
 \chapter{Conclusion \& Perspectives}
 \label{ch:Conclusion & Perspectives}
 
-In this work an approach for identification of trajectory anomalies in uncertain ST data was proposed and discussed. To perform an evaluation and implement the approach, the framework was developed. The source code of the implemented framework is available on GitHub repository \cite{online:mt_anomalies}. For solving the task of outliers detection the clustering approach was used as a basis, specifically agglomerative hierarchical clustering algorithm. To calculate the similarity and dissimilarity between trajectories and clusters, the LCSS distance was chosen. However, as it was mentioned in previous chapters, LCSS distance calculation becomes infeasible for long trajectories. For that reason the approximation of input trajectories using polynomial regression was performed. According to the evaluation results, the best accuracy of approximation is achieved while using the 3\up{th} and 4\up{th}-degree polynomial functions jointly. Thereby, clustering was performed on a filtered set of approximated input trajectories using key points for each of them. The accuracy of the performed clustering was evaluated using a DI index and is equal to $XXXXXXXXX$ value, which can be considered as a $good$ result.
+In this work an approach for identification of trajectory anomalies in uncertain ST data was proposed and discussed. To perform an evaluation and implement the approach, the framework was developed. The source code of the implemented framework is available on GitHub repository \cite{online:mt_anomalies}. For solving the task of outliers detection the clustering approach was used as a basis, specifically agglomerative hierarchical clustering algorithm. To calculate the similarity and dissimilarity between trajectories and clusters, the LCSS distance was chosen. However, as it was mentioned in previous chapters, LCSS distance calculation becomes infeasible for long trajectories. For that reason the approximation of input trajectories using polynomial regression was performed. According to the evaluation results, the best accuracy of approximation is achieved while using the 3\up{th} and 4\up{th}-degree polynomial functions jointly. Thereby, clustering was performed on a filtered set of approximated input trajectories using key points for each of them. The accuracy of the performed clustering was evaluated using a DI index and is equal to $0.95$ value, which can be considered as a $good$ result.
+\todo{Update after obtaining final results}
 
 (In this work following results were achieved:)
 
@@ -12,7 +13,6 @@ As a result of this work following conclusions and deductions can be drawn:
 	\item approximation using a polynomial regression works well with the trajectory data, since it is known in advance that spatial coordinates of a trajectory are functionally dependent on the time (according to principles of physics, speed, acceleration, etc.)
 	
 \end{itemize}
-
 
 \bigbreak
 

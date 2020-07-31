@@ -153,9 +153,13 @@ LCSS calculation is described in Algorithm \ref{algo:lcss-descr}.
 
 \subsection{LCSS parameters adaptability}
 
-The traditional LCSS measure supposed using a constant $\delta$ and $\varepsilon$ parameters and does not imply making them adaptive. However, one of the objectives in this work is investigating an opportunity to increase results accuracy by exploring a functional dependency between these parameters and a distance from the camera. Since camera is placed at a fixed location on an intersection, the problems caused by a perspective can take place. It can be seen from the Figure \ref{fig:tr_p} depicting the allocation of input trajectories that with distance from the camera, which is placed at the lower fore part of the image, trajectories become more densely located relative to each other (the input data will be described and depicted in the following chapter). In the case of a constant $\varepsilon$ value, which controls the threshold while testing the spatial equality of trajectory points, trajectory points of trajectories located far from camera (meaning they appear at the upper part of the sample images and are more densely located to each other) will be incorrectly considered as similar. This can contort the following analysis and skew the further clustering results.
+The traditional LCSS measure supposed using a constant $\delta$ and $\varepsilon$ parameters and does not imply making them adaptive. However, one of the objectives in this work is investigating an opportunity to increase results accuracy by exploring a functional dependency between these parameters and a distance from the camera. 
 
-The approach to make the parameters adaptive considered in this work is described in Algorithm \ref{algo:lcss-params-adapt}.
+Since camera is placed at a fixed location on an intersection, the problems caused by a perspective can take place. It can be seen from the Figure \ref{fig:tr_p} depicting the allocation of input trajectories that with distance from the camera, which is placed at the lower fore part of the image, trajectories become more densely located relative to each other (the input data will be described and depicted in the following chapter). In the case of a constant $\varepsilon$ value, which controls the threshold while testing the spatial equality of trajectory points, trajectory points of trajectories located far from camera (meaning they appear at the upper part of the sample images and are more densely located to each other) will be incorrectly considered as similar. This can contort the following analysis and skew the further clustering results.
+
+Therefore, the value of $\varepsilon$ must change in accordance with the distance from the camera location: $\varepsilon$ decreases as a trajectory point gets farther from the camera and increases as a trajectory point gets closer. Consequently, it can be assumed that the $\varepsilon$ and distance are in a negative relation, meaning that in the resulting formula the distance from the camera must appear in a denominator with a some coefficient.
+
+The approach to make the parameters adaptive considered in this work is described in Algorithm \ref{algo:lcss-params-adapt} and depicted in Figure \ref{fig:adaptivity}.
 
 \begin{algorithm}[!htb]
 	\caption{Adaptive LCSS parameters calculation}
@@ -170,9 +174,16 @@ The approach to make the parameters adaptive considered in this work is describe
 		- compute location of a camera point ($CP$)\;
 		- compute Euclidean distance for two pairs $d_1$($TP_1$, $CP$) and $d_2$($TP_2$, $CP$)\;
 		- compute corresponding $\varepsilon_1$ and $\varepsilon_2$ values\;
-		- take the min($\varepsilon_1$, $\varepsilon_2$) as a final $\varepsilon$ to compare $TP_1$ and $TP_2$.
+		- take the $\max(\varepsilon_1,\ \varepsilon_2)$ as a final $\varepsilon$ to compare $TP_1$ and $TP_2$.
 	}
 \end{algorithm}
+
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.7\textwidth]{images/adaptivity.png}
+	\caption{The principle of adaptive $\varepsilon$ value selection}
+	\label{fig:adaptivity}
+\end{figure}
 
 In order to optimize the calculation of a distance to camera point and avoid recalculation of it multiple times during the LCSS computation algorithm, this distance is being calculated in advance and stored for each trajectory point.
 
