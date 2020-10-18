@@ -1,0 +1,23 @@
+private void clustersModeling() {
+	for (Cluster c: clusters) {
+		if (c.getTrajectories().size() == 1) {
+			c.setClusterModel(c.getTrajectories().get(0));
+			continue;
+		}
+		Trajectory model = null;
+		double avg = Double.MAX_VALUE;
+		for (Trajectory t: c.getTrajectories()) {
+			double sum = 0.0;
+			for (Trajectory t1: c.getTrajectories()) {
+				if (t1 != t)
+				sum += trajLCSSDistances[t.getId()][t1.getId()];
+			}
+			double curAvg = sum / (c.getTrajectories().size() - 1);
+			if (curAvg < avg) {
+				model = t;
+				avg = curAvg;
+			}
+		}
+		c.setClusterModel(model);
+	}
+}

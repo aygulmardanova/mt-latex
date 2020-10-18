@@ -9,16 +9,16 @@
 \geometry{
 	a4paper,
 %	total={170mm,257mm},
-%	left=30mm,
-%	top=30mm,
+	left=30mm,
+	top=30mm,
 	right=20mm,
-	bottom=30mm
+	bottom=25mm
 }
 
 \usepackage[compact]{titlesec}
 \titleformat{\chapter}
 {\normalfont\LARGE\bfseries}{\thechapter}{1em}{}
-\titlespacing*{\chapter}{0pt}{0pt}{40pt}
+\titlespacing*{\chapter}{0pt}{-40pt}{30pt}
 
 \let\up\textsuperscript
 
@@ -90,7 +90,7 @@
 	escapeinside={<--}{-->}
 }
 
-%\lstset{style=mystyle-pseudo}
+\lstset{style=code-style-java}
 
 % Шрифты, xelatex
 \defaultfontfeatures{Ligatures=TeX}
@@ -100,16 +100,17 @@
 %% Graphics & Illustrations %%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}			% Images and additions inserting (to load graphics)
 \usepackage{wrapfig}			% integration of graphics with wraping text
-%\usepackage{subfig}				% integration of multiple objects within a float
+%\usepackage{subfig}			% integration of multiple objects within a float
 \usepackage{pdfpages}			% PDF inserting, binds a graphic or page (.pdf or .jpg) in the document
 \usepackage{float}
-\usepackage[section]{placeins}
+\usepackage[section]{placeins}	% Pictures and Tables are inside one section
 
 % Format of labels for figures and tables
 \usepackage{chngcntr}
-\usepackage{multirow}
 \usepackage{booktabs}
-\usepackage{array}
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{array, makecell}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \usepackage[tableposition=top]{caption}
 \usepackage{subcaption}
@@ -119,7 +120,7 @@
 \counterwithin{table}{section}
 
 % Format of labels for theorems and definitions
-\usepackage{amssymb,amsfonts,amsmath, amsthm} % Maths
+\usepackage{amssymb, amsfonts, amsmath, amsthm, bm} % Maths
 \numberwithin{equation}{section} % Formules numbering chapter.number
 
 \theoremstyle{definition}
@@ -127,20 +128,10 @@
 
 \usepackage[yyyymmdd,hhmmss]{datetime}
 \usepackage[ruled,vlined]{algorithm2e} 		% algochapter
+\SetKwFor{For}{for (}{) $\lbrace$}{$\rbrace$}
+\SetKwFor{BeginRDP}{RDP (}{) $\lbrace$}{$\rbrace$}
 
 \renewcommand*{\lstlistlistingname}{List of Listings}
-
-
-%%%% Joining Algorithms and Listings into one %%%
-%\makeatletter
-%\AtBeginDocument{%
-%	\renewcommand\lstlistlistingname{Algorithms and Listings}
-%	\let\c@algocf\c@lstlisting
-%}
-%\renewcommand{\algocf@list}{lol}%
-%\renewcommand*\l@algocf{\@dottedtocline{1}{1.5em}{2.3em}}
-%\makeatother
-%%%%%%%%
 
 %% HyperRef %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % http://www.tug.org/applications/hyperref/manual.html
@@ -167,13 +158,9 @@
 
 % Page number is bottom-right
 \usepackage{fancyhdr}
-\pagestyle{fancy}
+\pagestyle{fancyplain}
 \fancyhf{}
 \rhead{\rightmark}
-\fancyfoot[R]{\thepage}
+\fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0.4pt}
-
-
-%\renewcommand{\chaptermark}[1]{ \markboth{#1}{} }
-%\renewcommand{\sectionmark}[1]{ \markright{#1} }

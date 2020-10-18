@@ -37,6 +37,7 @@ The architecture of the framework is based on an already discussed related work 
 
 The implemented framework consists of several modules which are responsible for performing particular steps of the aforementioned workflow (Figure \ref{fig:proj-arch}):
 \begin{itemize}
+	\setlength\itemsep{-0.2em}
 	\item \textit{entity} -- contains entity-classes for $Trajectory$, $TrajectoryPoint$, $Cluster$ and etc. objects;
 	\item \textit{parsing} -- reading a 'txt'-file with input trajectories and parsing them to create $TrajectoryPoint$ and $Trajectory$ objects;
 	\item \textit{csv} -- contains logic for reading and writing from/into 'csv'-files, is used to save calculated LCSS measures and load to proceed with clustering;
@@ -54,7 +55,9 @@ The implemented framework consists of several modules which are responsible for 
 	\label{fig:proj-arch}
 \end{figure}
 
-\section{Agglomerative Hierarchical Clustering}
+\section{Clustering}
+
+\subsection{Agglomerative Hierarchical Clustering}
 
 Clustering is done using an unsupervised agglomerative hierarchical clustering approach. The description of this approach is given in Algorithm \ref{algo:ahc-descr} \cite{inproceedings:7_related_work}.
 
@@ -86,7 +89,25 @@ D_{min}(C_i, C_j) = \min_{T_1 \in C_i, T_2 \in C_j} D_{LCSS}(T_1, T_2),
 
 where ($C_i$, $C_j$) denote two clusters and ($T_1$, $T_2$) correspond to two trajectories from two clusters respectively.
 
-\section{Clusters' modeling}
+\subsection{Normal and Anomalous Clusters Classification}
+
+Hereinafter the concept of the cluster cardinality, denoted as $|C|$, is used.
+The cardinality of a cluster refers to a number of trajectories in that cluster.
+
+Since the main objective of the current work is detection of anomalies by the way of trajectories clustering, following clusters' modeling and finally an input trajectory classification, the concepts of a normal and anomalous cluster must be introduced. Normal cluster is a cluster containing a relatively large amount of trajectories in comparison with others, meaning that such a vehicular behavior, defined by the cluster, is normal and allowed on the current intersection. Consequently, the clusters classification technique needs to be defined.
+
+To perform clusters classification, the analysis of a selection, obtained by calculating the cardinalities of resulting clusters, will be conducted using the order statistical measure, specifically quantile. Quantiles are the way of dividing the whole initial ordered data set into a predefined amount of segments \cite{inbook:stats}. The $\alpha$-quantile is a numerical value, which represents the characteristic of the distribution law of a random variable, according to which all values from this distribution with a fixed probability $\alpha$ (or $\alpha$\up{th} part of all values) do not exceed the specified $\alpha$-quantile value. In statistical analysis, the most frequently used quantiles are: median (dividing the entire set into 2 segments at the 50th percentile), quartile (dividing into 4 segments by 25, 50, 75\%), quintile (5 segments), decile (10 segments), percentile (100 segments). In the current work, it was decided to use the 0.25-quantile (lower, first quartile) as the threshold value.
+
+The general algorithm of normal and abnormal clusters classification in a simplified form is presented on Figure \ref{fig:cl-classif}.
+
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.8\textwidth]{images/cl-classif.png}
+	\caption{Normal and anomalous clusters classification}
+	\label{fig:cl-classif}
+\end{figure}
+
+\subsection{Clusters' Modeling}
 
 In order to perform a further classification of an input trajectory in a more efficient way, in the related work it was proposed to create cluster models (CM), or path models, for normal clusters. Model of a cluster can be described as a compact representation of it. Models of normal clusters can be considered as patterns of frequent trajectories since they represent the whole cluster of trajectories with the highest accuracy. 
 
@@ -104,19 +125,26 @@ Authors in \cite{inproceedings:7_related_work} propose an easy to calculate way 
 	CM(C) = \min\limits_{T \in C} \frac{1}{|C|} \sum_{T' \in C} D_{LCSS}(T, T')
 \end{equation}
 
+Figure \ref{fig:cm-modeling} depicts the main concept of choosing the CM: for each group of trajectories taking as a CM the most qualificative, characteristical trajectory.
 
-\section{Trajectories similarity}
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.7\textwidth]{images/cm-modeling.png}
+	\caption{CM detection}
+	\label{fig:cm-modeling}
+\end{figure}
+
+Therefore, clusters' modeling is implemented in order to simplify and accelerate the classification step, which, as a result of using the proposed approach of choosing a representative trajectory for each cluster, reduces to calculating the distance between the input trajectory and each of the CMs.
+
+\section{Trajectories Analysis}
 
 It was mentioned before, that LCSS distance is used as a distance measure between trajectories to perform clustering. LCSS distance implies computing the Longest Common SubSequence between two input trajectories using two parameter values: $\delta$ and $\varepsilon$. 
+
+\subsection{LCSS Distance to Measure Trajectories Similarity}
 
 Traditionally $\delta$ and $\varepsilon$ parameters are constant and defined in advance. However, in the developed framework in order to handle uncertainty of trajectory data coming from different position in respect to camera adaptive values of parameters are implemented. Parameters are functionally dependent on position of a moving object on a scene in respect to the camera. 
 
 While considering the visualization of trajectories on sample images taken from the cameras, following can be deduced: since the bottom part of the image represent the region located closer to surveillance camera, moving objects on the upper part of the image are more distant from the camera and as a result are more densely located in respect to representation of each other on the image. $\varepsilon$ is responsible for the threshold controlling spatial remoteness of trajectory points while computing similarity distance. Consequently, it must be adapted to the remoteness and decrease as a trajectory point gets farther from the camera.
-
-\todo{$\delta$ behaviour?}
-
-LCSS calculation is described in Algorithm \ref{algo:lcss-descr}.
-\todo{include $\delta$ and $\varepsilon$ as an input or calculate inside?}
 
 \begin{algorithm}[!htb]
 	\caption{Description of LCSS distance calculation}
@@ -125,18 +153,20 @@ LCSS calculation is described in Algorithm \ref{algo:lcss-descr}.
 	\KwIn{First trajectory: $T_1$,\newline
 			Second trajectory: $T_2$,\newline
 			Temporal remoteness threshold: $\delta$,\newline
-			Spatial remoteness threshold: $\varepsilon$
+			Spatial remoteness threshold (default): $\varepsilon_x$, $\varepsilon_y$
 	}
 	\KwOut{LCSS distance for two trajectories}
 	\Begin{
 		// Initialization \\
 		- calculate length of $T_1$\;
 		- calculate length of $T_2$\;
-		// LCSS similarity calculation \newline	
+		// LCSS similarity calculation \\	
+		- take last point of $T_1$ ($TP_1$) and $T_2$ ($TP_2$)\;
+		- get $\varepsilon_x$ and $\varepsilon_y$ for pair ($TP_1$, $TP_2$)\;
 		\eIf {$T_1$ or $T_2$ is empty}{
 			return 0;	
-		}{\eIf {difference between X-coordinates < $\varepsilon$ \newline
-			AND difference between Y-coordinates < $\varepsilon$ \newline
+		}{\eIf {difference between X-coordinates < $\varepsilon_x$ \newline
+			AND difference between Y-coordinates < $\varepsilon_y$ \newline
 			AND difference between trajectory lengths < $\delta$}{
 				- increase LCSS by 1\;
 				- call recursive for trajectories excluding last points\;
@@ -151,7 +181,7 @@ LCSS calculation is described in Algorithm \ref{algo:lcss-descr}.
 	}
 \end{algorithm}
 
-\subsection{LCSS parameters adaptability}
+\subsection{LCSS Parameters Adaptability}
 
 The traditional LCSS measure supposed using a constant $\delta$ and $\varepsilon$ parameters and does not imply making them adaptive. However, one of the objectives in this work is investigating an opportunity to increase results accuracy by exploring a functional dependency between these parameters and a distance from the camera. 
 
@@ -192,6 +222,7 @@ In order to optimize the calculation of a distance to camera point and avoid rec
 Since the goal of the current work is finding an optimal adaptive parameter values for similarity measure computation, it is necessary to analyze and compare the results after performing clustering. 
 
 According to \cite{online:dunn_cl_valid} cluster validity measures can be classified as follows:
+
 \begin{itemize}
 	\item \textbf{Internal cluster validation} -- the result of performed clustering is being evaluated based on the input data clustered. It is based on an internal information and does not include references to external information.
 	\item \textbf{External cluster validation} -- evaluation of clustering results is performed in accordance with externally known results, e.g. given class labels. Such validation is not appropriate for unsupervised clustering then no input labels are provided.
@@ -225,14 +256,25 @@ DI = \frac {d_{min}} {d_{max}} = \frac
 
 Higher values of the DI indicates the better results of clustering. Trajectories, located far from each other inside one cluster, must be distinguishable from trajectories relating to other clusters. Values of DI close to 1 mean that minimum distances to trajectories from different clusters remain bigger than distance to farthermost trajectories from the same cluster. However, the computational cost of the DI is highly dependent on the data: the computation cost increases with the increase of number of clusters and dimensionality of the data \cite{online:dunn_cl_valid}.
 
-
 \section{Trajectories Approximation}
 
-However, notwithstanding that the LCSS similarity distance works with trajectories of arbitrary lengths and does not natively require the preprocessing of trajectories, the calculation of LCSS measure becomes extremely computationally expensive and time consuming with the growth of the trajectory length because of the recursiveness. For that reason it was decided to decrease the size of trajectories in the current work by approximation of trajectory data. That leads to the lose of accuracy but allows to get acceptable results in adequate amount of time.
+However, notwithstanding that the LCSS similarity distance works with trajectories of arbitrary lengths and does not natively require the preprocessing of trajectories, the calculation of LCSS measure becomes extremely computationally expensive and time consuming with the growth of the trajectory length because of the recursiveness. Moreover, most of the input trajectories contain far more trajectory points than needed for further analysis, these redundant information reduces the speed of processing \cite{article:multir_pol_appr}. For that reason it was decided to decrease the size of trajectories in the current work by approximation of trajectory data. This task is called trajectory simplification (TS). The goal of a TS task is to convert a given trajectory, represented by a set of trajectory points $T = {(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)}$, into a subset of points $T' = {(x_{i_1}, y_{i_1}), (x_{i_2}, y_{i_2}), \ldots, (x_{i_m}, y_{i_m})}$, where $1 = i_1 < \ldots < i_m = n$ \cite{article:multir_pol_appr}.
+
+That leads to the lose of accuracy but allows to get acceptable results in adequate amount of time.
+
+Polygonal approximation techniques can be classified into following classes \cite{article:multir_pol_appr}:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item \textit{min-$\varepsilon$ problem} -- given an input trajectory $T$ with a length $N$ and integer parameter $M$, perform an approximation with at most $M$ resulting trajectory points with minimum approximation error $\varepsilon$.
+	\item \textit{min-\# problem} -- given an input trajectory $T$ with a length $N$ and error tolerance $\varepsilon$, perform an approximation with the minimum $M$ resulting trajectory points satisfying the error tolerance $\varepsilon$.
+\end{itemize}
+
+\subsection{Curve Fitting}
 
 The curve fitting concept is one of the standard approaches to perform approximation \cite{article:behav_form_extr}. The main task is finding an appropriate relation or law possibly existing between the input (independent) and output (dependent) variables from a given input data set of observed values. And the curve fitting is the process of expressing a relationship between variables in terms of algebraic equations. The main goal of the curve fitting is to find parameters for a model (equation or function) to fit to the experimental data. 
 
-\subsection{Regression Analysis}
+\subsubsection{Regression Analysis}
 
 One of the widely used approaches appearing from curve fitting is a Regression Analysis, which is also considered as a form of predictive modeling approach and, according to the traditional definition, studies the relationship between a dependent variable (response) $Y$ and one or more independent variables $X$'s and tends to find trends in data. In other words it supposes ``using the relationship between variables to fit the best fit line or regression equation that can be used to make predictions'' \cite{online:intro_lr_pr}.
 
@@ -240,7 +282,7 @@ In order to simplify the relationship fitting procedure, it is usually assumed t
 
 A regression can be linear or polynomial (nonlinear, curvilinear) depending on the function the data is approximated with: linear regression refers to a relationship approximated by a straight line whereas curvilinear regression refers to a relationship following a curve. Due to a broader range of functions the polynomial regression can work with, it provides better approximation of the input relationship in comparison to linear regression \cite{online:intro_lr_pr}. Even if it is impossible to guess the type of function to use for approximation in advance, plotting the data and analyzing it to find some behavioral pattern, such as linear, quadratic or higher-order dependency, can be useful \cite{article:behav_form_extr}. 
 
-\subsection{Polynomial Regression}
+\subsubsection{Polynomial Regression}
 
 The visualization of input trajectory data is given in Figure \ref{fig:tr_p}. As it can be seen from the picture, neither the linear or $2\up{nd}$ order functions can not fit the data properly due to complexity of trajectory forms. For that reason it was decided to focus on approximation using higher-order polynomial regression. The evaluation of polynomial regression with different degrees will be given further and the following discussion and implementation will be intended to find a suitable $n\up{th}$ order polynomial equation and parameter values to represent each input trajectory as a `trajectory function'. Since trajectory data is represented by two-dimensional spatial data along with temporal data and it is necessary to approximate spatial information, $x$- and $y$-coordinates will be considered as dependent variables and $time$ will be used as an independent variable. Consequently, polynomial regression will be performed twice with two output polynomial functions representing $x(t)$ and $y(t)$ for each of the input trajectories $T$:
 
@@ -254,3 +296,130 @@ The visualization of input trajectory data is given in Figure \ref{fig:tr_p}. As
 
 Trajectories will be converted from a shape of a list of trajectory points into equations (time functions) defined in a geometrical space, which can represent approximately all of them. Taking key points of the representative polynomial can decrease the size of the trajectory therethrough reducing the total operational cost and computational complexity of LCSS calculation. Moreover, mathematical equations are able to store information in a dense form and apart from other advantages such a data reduction leads to consuming less amount of space and increasing the storage efficiency \cite{article:behav_form_extr}. Also so called built `trajectory functions's can provide interpolation and discover the missing data points.
 
+\bigbreak
+
+\subsubsection{$R^2$ for Polynomial Regression Evaluation}
+
+In order to achieve better approximation the evaluation of polynomial regression results was performed using the Coefficient of Determination denoted by $R^2$ (also known as a $R$-$squared$ score, \textit{Pearson's coefficient of regression}) \cite{inbook:stats}. $R^2$ measures the proportion of the response dependent variable variance that can be explained by the regression model with given parameters and is predictable from the independent variable and can be calculated as follows: 
+
+\begin{equation}\label{eq:r_sq}
+	R^2 = 1 - \frac{SSE}{TSS} = 1 - \frac{\sum{(y_i - \hat{y_i})^2}}{\sum{(y_i - \overline{y})^2}}
+\end{equation}
+
+where $SSE$ (Sum of Squares due to Error) is calculated as a sum of squared differences between actual $y_i$, and predicted $\hat{y_i}$ dependent variable values and $TSS$ (Total Sum of Squares) is calculated as a sum of squared deviations of an actual value $y_i$ from a mean $\overline{y}$.
+
+$R^2$ takes a value between [0, 1], where a value close to 1 indicates that there is a strong relationship between the selected parameters and the model (polynomial equation in this case) predicts the data perfectly \cite{online:reg_r_interpr}. Models with a coefficient value above 0.8 are considered to be adequate; a value of 1 indicates the presence of a functional relationship between the variables.
+
+\subsection{Ramer-Douglas-Peucker Algorithm}
+
+Another approach for solving the TS task by reducing the amount of points in a trajectory curve is Ramer-Douglas-Peucker (RDP) algorithm, also known as an iterative end-point fit algorithm or split-and-merge algorithm.
+
+The main concept of the algorithm is that, given an input trajectory curve represented by line segments (polyline), it seeks to obtain a representative curve with smaller amount of trajectory points (Algorithm \ref{algo:rdp-algo}) \cite{online:rdp_algo_wiki}. The resulting simplified trajectory consist of a subset of the original trajectory points, with indispensably kept first and last points. The algorithm uses the notion of `dissimilar', which is calculated as the maximum distance between the original trajectory curve and its approximation.
+
+Figure \ref{fig:rdp_algo} depicts the process of a curve approximation using RDP algorithm. The algorithm requires an initial trajectory curve consisting of an ordered set of trajectory points and predefined point-to-edge distance tolerance $\varepsilon > 0$, controlling the remoteness. The input trajectory curve is being recursively divided into segments, while the first line segment (edge) is defined by first and last points as ends. Then algorithm determines the farthermost point ($p'$) for the current line segment ($line$) and processes it in the following way based on the input $\varepsilon$:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item $dist(p', line) < \varepsilon$ -- remove all the points, which were not yet marked to be kept;
+	\item $dist(p', line) > \varepsilon$ -- mark $p'$ to be kept and call the algorithm recursively on two line segments: 1) from first point to $p'$, 2) from $p'$ to last.
+\end{itemize} 
+
+\begin{wrapfigure}[20]{r}{0.4\textwidth}
+	\vspace{0pt}
+	\centering{}
+	\includegraphics[width=\linewidth]{images/rdp-algo-2.png}
+	\caption{Curve smoothing using RDP algorithm \cite{online:rdp_algo_var}}
+	\label{fig:rdp_algo}
+\end{wrapfigure}
+
+The recursive process continues till all points from the original curve satisfy the point-to-edge tolerance. The simplified trajectory curve can be obtained by choosing only points marked as kept. However, according to the traditional RDP algorithm while using the $\varepsilon$ as a point-to-edge tolerance, the limitation for maximum amount of points is not specified and the resulting simplified curve may contain any number of trajectory points \cite{online:rdp_algo_var}. Such an implementation can be inappropriate in this case, since the main goal of the approximation step is reducing the length of trajectory up to 9 points. For that reason the variation of RDP algorithm was introduced with the use of a point count tolerance instead of a point-to-edge tolerance. It specifies the maximum amount of vertices in the simplified curve. All points of the current approximated trajectory are considered as possible keys and are being processed simultaneously: among them algorithm chooses the point with the maximum point-to-edge distance to be kept.
+
+\begin{algorithm}[!htb]
+	\caption{Description of Ramer-Douglas-Peucker Algorithm}
+	\label{algo:rdp-algo}
+	\SetAlgoLined
+	\KwIn{List of trajectory points: TrajectoryPoint[] trajectory,\newline
+		Maximum distance for a dimension: $\varepsilon$
+	}
+	\KwOut{Sublist of trajectory points: TrajectoryPoint[] simplified}
+	\BeginRDP{trajectory, $\varepsilon$}{
+		// Find the point with the maximum distance \\
+		dmax = 0\;
+		index = 0\;
+		end = trajectory.length()\;
+		\For{$i = 2;\ i < end - 1;\ i++$}{
+			d = perpendicularDistance(trajectory[i], Line(trajectory[1], trajectory[end]))\;
+			\eIf {d > dmax}{
+				index = i\;
+				dmax = d;
+			}
+		}
+		// Initialize empty simplified trajectory points list \\
+		TrajectoryPoint[] simplified = empty\;
+		// If max distance is greater than $\varepsilon$, recursively simplify \\
+		\eIf {dmax > $\varepsilon$}{
+			// Split and get two results \\
+			TrajectoryPoint[] part1 = RDP(trajectory[1...index], $\varepsilon$)\;
+			TrajectoryPoint[] part2 = RDP(trajectory[index...end], $\varepsilon$)\;
+			// Build the result list \\
+			simplified = \{part1[1...part1.length() - 1], part2[1...part2.length()]\}
+		}{
+			simplified = \{trajectory[1], trajectory[end]\}
+		}
+	}
+\end{algorithm}
+
+\bigbreak
+
+\subsubsection{Disadvantages}
+
+However, traditional RDP algorithm does not provide guaranteed amount of resulting approximation points: the amount of them can significantly vary depending on the input trajectory complexity, number of initial points and defined value of $\varepsilon$.
+
+\subsubsection{Douglas-Peucker N Algorithm}
+
+To deal with the main disadvantage of the traditional RDP algorithm, \textit{Douglas-Peucker N} algorithm was proposed as its variation. It has 2 main differences \cite{online:rdp_algo_var}: 
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item using a point count tolerance instead of a point-to-edge distance tolerance as an objective for approximation and 
+	\item processing all points of a current simplified trajectory at the same time as possible keys, in comparison with the traditional RDP algorithm, which is based on choosing one random point at each step. The point with the highest point-to-edge distance is considered to be the new key.
+\end{itemize}
+
+Taking into consideration all possible points at any time leads to higher quality of approximation results \cite{online:rdp_algo_var}.
+
+The description of the Douglas-Peucker N approach is given in Algorithm \ref{algo:rdp-n-descr}.
+
+\begin{algorithm}[!htb]
+	\caption{Description of Douglas-Peucker N Algorithm}
+	\label{algo:rdp-n-descr}
+	\SetAlgoLined
+	\KwIn{	List of trajectory points: TrajectoryPoint[] trajectory,\newline
+			Maximum amount of points in simplified trajectory: count
+	}
+	\KwOut{Sublist of trajectory points: TrajectoryPoint[] simplified}
+	\BeginRDP{trajectory, count}{
+		- initialize the simplified trajectory with first and last points from original trajectory \\
+		\While{number of points in simplified trajectory is less than $count$}{
+			// for each point from original trajectory: \\
+			\For{TrajectoryPoint: trajectory.points}{
+				- find the corresponding simplified line segment; \\
+				- calculate distance to it; \\
+			}
+			- find the point with the maximum point-to-edge distance;\\
+			- add the chosen point to simplified trajectory;\\
+		}
+	}
+	
+\end{algorithm}
+
+
+\subsubsection{RDP Algorithm Evaluation using Positional Errors}
+
+In order to compare results, the effectiveness and accuracy of RDP algorithm with the results of the Polynomial Regression, the location difference between the original curve and the simplified line will be analyzed. This method is called positional errors calculation. Positional error is being computed for each input original point as the perpendicular difference between the original point and the respective simplified line segment (Figure \ref{fig:rdp_algo_eval}) \cite{online:rdp_algo_var}. Lower the positional errors -- better are simplification results.
+
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.5\textwidth]{images/rdp-algo-eval.png}
+	\caption{Positional Errors for RDP evaluation \cite{online:rdp_algo_var}}
+	\label{fig:rdp_algo_eval}
+\end{figure}

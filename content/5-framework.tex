@@ -5,7 +5,9 @@ In this chapter the description of the framework development is given. It is int
 \section{Stack of Technologies}
 
 For implementation part of the work Java programming language along with libraries and Apache Maven as a build automation tool were used with following versions:
+
 \begin{itemize}
+	\setlength\itemsep{0em}
 	\item Java - 11 OpenJDK
 	\item Apache Maven - 3.6.3
 	\item Commons Math: The Apache Commons Mathematics Library - 3.4.1
@@ -18,12 +20,18 @@ Java AWT (Abstract Window Toolkit) is an API (Application Programming Interface)
 
 Java Swing as well as Java AWT is a GUI widget toolkit pursuing the same objective of providing a GUI to Java applications and creating window-based applications. However, Swing is more recent and advanced and supports more elaborate set of GUI components than Java AWT. In this work Swing was used to create windows with output images to visualize input trajectories, approximation and clustering results.
 
-\section{Input Data Description (Nature of Data)}
+\section{Input Data Processing}
+
+This section gives an overview of the used input data format and describes the steps of input data preprocessing.
+
+\subsection{Input Data Description (Nature of Data)}
 
 According to the research done by the US Department of Transportation based on data of Fatality Analysis Reporting System (FARS) and National Automotive Sampling System, nearly 40 percents of all the reported in 2008 year crashes were road intersection related \cite{inproceedings:10_cfi}. Consequently, cross-road transport activity analysis is significantly important nowadays in context of safety, and identifying unsafe vehicular trajectories, which violate traffic rules, may be one of the steps towards improving the statistics.
 
 In the presented work video from enforcement cameras is used for training and testing. Test videos are captured using the Intellectual Transportation Systems implemented on four different Kazan crossroads:
+
 \begin{enumerate}
+	\setlength\itemsep{0em}	
 	\item An intersection of Pravo-Bulachnaya and Puschkina streets, $1.txt$ (Figure \ref{fig:is_1}).
 	\item An intersection of Nesmelova and Kirovskaya Damba streets, $2.txt$ (Figure \ref{fig:is_2}).
 	\item An intersection of Moskovskaya and Galiaskara Kamala streets, $3.txt$ (Figure \ref{fig:is_3}).
@@ -76,31 +84,47 @@ By a trajectory anomaly we understand vehicle trajectories through the crossroad
 	\label{fig:tr_p}
 \end{figure}
 
-\subsection{Input data file structure}
+\subsection{Input Data File Structure}
+
 Tracking system, as it was described before, handles video from enforcement cameras and prepare it for further analysis: converts video stream into a set of vectors with tracking points on images (Figure \ref{fig:tr_p}).
 
 Input data files have the following structure:
+
 \begin{equation} \label{eq:input_str}
-[[[(x_1^1, y_1^1), ..., (x_1^n, y_1^n)], [t_1, ... t_n]], [[(x_2^1, y_2^1), ..., (x_2^m, y_2^m)], [t_1, ... t_m]], ...]
+	[[[(x_1^1, y_1^1), ..., (x_1^n, y_1^n)], [t_1, ... t_n]], [[(x_2^1, y_2^1), ..., (x_2^m, y_2^m)], [t_1, ... t_m]], ...]
 \end{equation}
 
 As it can be seen from the input data file structure, each trajectory is represented by a two-element array, where first array stores coordinates as an array of two-tuples $(x_i^j, y_i^j)$ and second array contains timestamps for each spatial point in the corresponding order $(t_i)$. The extracted $x$- and $y$-coordinates correspond to pixels on input images. In Formula \ref{eq:input_str} the lower index of the spatial coordinates indicates the ordering number of a trajectory, while the upper index indicates the ordering number of a tracking point. The outer array refers to the array of trajectories.
 
-\section{Input Data Processing}
+\subsection{Input Data Parsing}
+
 Since chosen algorithm requires trajectories in a form of multi-dimensional vectors, the initial input data needs to be converted into the required form. For that reason, a custom parser was implemented. It takes a ‘txt’ file with trajectories as an input and as a result it returns a list of Trajectory objects. Trajectory object consists of a number of TrajectoryPoint objects with following information: \textit{x}-coordinate, \textit{y}-coordinate, time \textit{t}. The source code of the parsing method is presented in Appendix A.
+
+As it was mentioned before, the current work is focused on detecting two types of abnormalities: spatial and spatiotemporal. To detect the outliers of the first group it is sufficient to analyze spatial information of trajectories. Detecting outliers of the second group, which is formed by trajectories of vehicles moving with an anomalously low or high speed, requires taking into consideration the temporal information along with spatial. For that reason the average constant speed $\upsilon$ is being calculated for each of the input trajectories $t$ at the end of the parsing step using the following equation (Formula \ref{eq:avg_speed}):
+
+\begin{equation} \label{eq:avg_speed}
+	\upsilon_{avg}(t) = \frac{distance_{total}} {time_{total}},
+\end{equation}
+
+where $distance_{total}$ refers to the total distance between the first and last trajectory points and $time_{total}$ refers to the time elapsed. The total distance can be computed as a sum of Euclidean distances between trajectory points on neighboring frames. Since it is known that frames are taken with an inter-frame interval 0,01 second, the speed calculation can be implemented as follows (Listing \ref{lst:speed-calc}):
+
+\lstset{style=code-style-java}
+\lstinputlisting[caption={Speed calculation}, label={lst:speed-calc}] {listings/calcSpeed.java}
+
+\subsection{Input Data Filtering}
 
 Input data contains trajectories of different length and covered distance. However, due to accuracy and tracking errors in tracking system, some trajectories are senseless and look deficient. One of the possible reasons of that is losing the tracking object by a tracker. In contrast with the case of lost location, then the missed location can be found using approximation and regression models, the lost tracking object can not be fixed afterwards. for that reason, in order to improve the quality of results, it was decided to filter the input trajectories and ignore short trajectories with small covered distance, where the covered distance is calculated as an Euclidean distance between first and last trajectory points. For filtering parameters following values were used: $minLength = 10\ (trajectory\ points)$, $minTotalDist = 80\ (pixels)$. Filtering results with depicting the removed and kept trajectories are showed in Figure \ref{fig:traj_filter}.
 
-\begin{figure}
+\begin{figure}[!htb]
 	\centering
-	\begin{subfigure}[b]{0.48\textwidth}
+	\begin{subfigure}[!htb]{0.48\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/traj-filter-out.png}
 		\caption{ignored}
 		\label{fig:traj_filter_out}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}[b]{0.48\textwidth}
+	\begin{subfigure}[!htb]{0.48\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/traj-filter-keep.png}
 		\caption{$3.txt$}
@@ -110,41 +134,22 @@ Input data contains trajectories of different length and covered distance. Howev
 	\label{fig:traj_filter}
 \end{figure}
 
-As it was mentioned before, the current work is focused on detecting two types of abnormalities: spatial and spatiotemporal. To detect the outliers of the first group it is sufficient to analyze spatial information of trajectories. Detecting outliers of the second group, which is formed by trajectories of vehicles moving with an anomalously low or high speed, requires taking into consideration the temporal information along with spatial. For that reason the average constant speed $\upsilon$ is being calculated for each of the input trajectories $t$ at the end of the parsing step using the following equation (Formula \ref{eq:avg_speed}):
+\subsection{Trajectories Approximation using Polynomial Regression}
 
-\begin{equation} \label{eq:avg_speed}
-\upsilon_{avg}(t) = \frac{distance_{total}} {time_{total}},
-\end{equation}
-
-where $distance_{total}$ refers to the total distance between the first and last trajectory points and $time_{total}$ refers to the time elapsed. The total distance can be computed as a sum of Euclidean distances between trajectory points on neighboring frames. Since it is known that frames are taken with an inter-frame interval 0,01 second, the speed calculation can be implemented as follows (Listing \ref{lst:speed-calc}):
-
-\lstset{style=code-style-java}
-\lstinputlisting[caption={Speed calculation}, label={lst:speed-calc}] {listings/calcSpeed.java}
-
-\section{Trajectories Approximation using Polynomial Regression}
-
-As it was discussed before, the polynomial regression will be used to approximate input trajectories. The implementations of a polynomial entity class\footnote{Polynomial implementation \url{https://javadoc.io/doc/org.apache.commons/commons-math3/3.4.1/org/apache/commons/math3/analysis/polynomials/PolynomialFunction.html}} (needed to further analyze the approximation equations and find key points) and a polynomial equation solver \footnote{Polynomial Function Solver implementation \url{https://www.javadoc.io/doc/org.apache.commons/commons-math3/3.4.1/org/apache/commons/math3/analysis/solvers/LaguerreSolver.html}} from the Apache Commons Math 3.4.1 library were used. To perform a polynomial regression\footnote{Polynomial Regression implementation \url{https://algs4.cs.princeton.edu/14analysis/PolynomialRegression.java}} the implementation provided by R. Sedgewick and K. Wayne for Java language was taken \cite{online:polynomial_impl}. All the ready-to-use implementations were extended by utility methods.
+As it was discussed before, the polynomial regression will be used to approximate input trajectories. The implementations of a polynomial entity class\footnote{Polynomial implementation \url{https://javadoc.io/doc/org.apache.commons/commons-math3/3.4.1/org/apache/commons/math3/analysis/polynomials/PolynomialFunction.html}} (needed to further analyze the approximation equations and find key points) and a polynomial equation solver\footnote{Polynomial Function Solver implementation \url{https://www.javadoc.io/doc/org.apache.commons/commons-math3/3.4.1/org/apache/commons/math3/analysis/solvers/LaguerreSolver.html}} from the Apache Commons Math 3.4.1 library were used. To perform a polynomial regression\footnote{Polynomial Regression implementation \url{https://algs4.cs.princeton.edu/14analysis/PolynomialRegression.java}} the implementation provided by R. Sedgewick and K. Wayne for Java language was taken \cite{online:polynomial_impl}. All the ready-to-use implementations were extended by utility methods.
 
 The $PolynomialRegression$ class takes as an input the desired degree of a polynomial ($d$) and two data sets of N data points consisting of real numbers: array of independent variables ($double[] t$), temporal data in this case, and array of dependent variables ($double[] x$, $double[] y$), spatial $x$- or $y$-coordinates. Then it performs a polynomial regression on an input set of N data points $(t_i, x_i)$ or $(t_i, y_i)$ and tries to fit a polynomial $x = \beta_0 + \beta_1t + \beta_2t^2 + \ldots \beta_dt^d$, where $\beta_i$ are the regression coefficients, with an aim to minimize the sum of squared residuals of the multiple regression model. Finding the best solution for polynomial parameters is based on a Least Squares method \cite{article:behav_form_extr}.
 
-In order to achieve better approximation the evaluation of polynomial regression results was performed using the Coefficient of Determination denoted by $R^2$ (also known as a $R$-$squared$ score, \textit{Pearson's coefficient of regression}) \cite{inbook:stats}. $R^2$ measures the proportion of the response dependent variable variance that can be explained by the regression model with given parameters and is predictable from the independent variable and can be calculated as follows: 
-
-\begin{equation}\label{eq:r_sq}
-	R^2 = 1 - \frac{SSE}{TSS} = 1 - \frac{\sum{(y_i - \hat{y_i})^2}}{\sum{(y_i - \overline{y})^2}}
-\end{equation}
-
-where $SSE$ (Sum of Squares due to Error) is calculated as a sum of squared differences between actual $y_i$, and predicted $\hat{y_i}$ dependent variable values and $TSS$ (Total Sum of Squares) is calculated as a sum of squared deviations of an actual value $y_i$ from a mean $\overline{y}$.
-
-$R^2$ takes a value between [0, 1] and value of 1 indicates that the model (polynomial equation in this case) predicts the data perfectly \cite{online:reg_r_interpr}. 
-
 In this work the polynomial regression was performed for all the input trajectories (Appendix B). The resulting regression models were compared in terms of $R^2$ score and analyzed with respect to a trajectory: shape, speed. The following Evaluation Chapter will give the comparison of evaluation results and discuss the obtained results.
 
-\subsection{Choosing key points from approximated trajectories}
+\subsubsection{Choosing Key Points from Approximated Trajectories}
 
 Using the approximated trajectories in further calculation was aimed to decrease the complexity of LCSS calculation. For that reason the length of trajectories must be reduced by choosing several key representative points from the trajectories by analyzing the approximation polynomials.
 
 It is known from Mathematics that critical points of a polynomial $f(t)$ refer to points where the polynomial function is not differentiable or the derivative at that point is equal to zero (stationary points). Stationary points, including local minimum and maximum, rising and falling inflection points, can be found by analyzing the first derivative of a function and solving the $f'(t) = 0$ equation. The inflection points can be found by further analysis of a second derivative: they correspond to the solutions of $f''(t) = 0$ equation. To solve polynomial equations solvers from Apache Commons Math library were used: $LaguerreSolver$, $BisectionSolver$ with following input parameters:
+
 \begin{itemize}
+	\setlength\itemsep{0em}
 	\item $maxItem = 30000$ -- sets the maximum allowed iterations to find a solution,
 	\item $min = firstTimePoint$ -- defines the minimum allowed value for the solution, means the lower border for a solution;
 	\item $max = lastTimePoint$ -- defines the maximum allowed value for the solution, means the upper border for a solution;
@@ -155,12 +160,65 @@ The equation solvers were run for first and second derivative polynomial functio
 
 \lstinputlisting[caption={Polynomial Solver initiation}, label={lst:solver-init}] {listings/initSolver.java}
 
-Solutions found by two solvers are merged together: only points referencing to different to time points are being left.
-In the case of trajectories analysis inflection points are very significant, because they carry an important information about the shape of a trajectory: such key points can denote the main turns or changes in the trajectory.
+Solutions found by two solvers are merged together: only points referencing to different to time points are being left. In the case of trajectories analysis inflection points are very significant, because they carry an important information about the shape of a trajectory: such key points can denote the main turns or changes in the trajectory.
 
-However, critical points can not be always found due to computational restrictions of high-order polynomial functions. Consequently, critical points, identified in such a way, can not fully describe the input trajectory and are not sufficient for further analysis since do not provide all the information about borders of a trajectory shape and sometimes can not visualize all the turns. For that reason it was decided to add key points calculated as border points for a trajectory by taking separately minimum and maximum $X$ and $Y$ coordinates and computing the corresponding trajectory points using a respective regression model (Listing \ref{lst:key-borders-calc}).
+However, critical points can not always be found due to computational restrictions of high-order polynomial functions. Consequently, critical points, identified in such a way, can not fully describe the input trajectory and are not sufficient for further analysis since do not provide all the information about borders of a trajectory shape and sometimes can not visualize all the turns. For that reason it was decided to add key points calculated as border points for a trajectory by taking separately minimum and maximum $X$ and $Y$ coordinates and computing the corresponding trajectory points using a respective regression model (Listing \ref{lst:key-borders-calc}).
 
 \lstinputlisting[caption={Calculating the border coordinates and corresponding key points}, label={lst:key-borders-calc}] {listings/calcKeyBorders.java}
+
+Nevertheless, the total amount of obtained key points is not sufficient to replace the input trajectory for further analysis. At this stage, trajectories in average has following number of key points: $min$ = 2, $max$ = 8, $average$ = 3,9.
+
+It is obvious that neither 2 or 4 key points are not enough to describe even the straight trajectory (Figure \ref{fig:2-3-kp}). Results of clustering using these key points for static and adaptive values of $\varepsilon$ are shown on Figure \ref{fig:few_kp_cl}.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/2-kp.png}
+		\caption{trajectories with 2 key points}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/3-kp.png}
+		\caption{trajectories with 3 key points}
+	\end{subfigure}	
+	\caption{Trajectories with 2 or 3 key points}
+	\label{fig:2-3-kp}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.5\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/few-kp-cl-st-9.png}
+		\caption{9 clusters, static $\bm{\varepsilon}$, $coeff_\varepsilon = 0.15$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/few-kp-cl-st-8.png}
+		\caption{8 clusters, static $\bm{\varepsilon}$, $coeff_\varepsilon = 0.15$}
+	\end{subfigure}	
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/few-kp-cl-ad-9.png}
+		\caption{9 clusters, adaptive $\bm{\varepsilon}$, $coeff_\varepsilon = 20.0$}
+	\end{subfigure}	
+	\caption{Results of clustering for few key points ($1.txt$)}
+	\label{fig:few_kp_cl}
+\end{figure}
+
+To deal with that and to decrease the influence of the impossibility to find critical points in some cases, obtained key points are augmented with additive key points by choosing them from an input trajectory using following algorithm:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item define the number of lacking points (to fulfill the total amount of key trajectory points equal to 9 in this case),
+	\item divide the whole trajectory curve into previously calculated number of segments,
+	\item take border points for each of the segments,
+	\item add points, which are neither equal or too close to any of the existing ones.
+\end{itemize}
 
 The results of performed polynomial regression approximation and key points calculation are presented in Figure \ref{fig:regr-kp}. The original trajectory data is visualized using a red color, while the blue trajectory points correspond to data points obtained using the functions of a polynomial approximation for the same time points. Key points of each trajectory are emphasized using bold blue square dots. It can be seen that the approximation function is close to the original trajectory function, for some trajectories approximation gives the same coordinates as in the original data (for trajectories with approximation polynomials having $R^2 \approx 1.0$). Also key points accurately follow the approximation line and describe the trajectory properly, hence, they can be used instead of original trajectory points to simplify the further trajectories analysis. 
 
@@ -218,7 +276,62 @@ The results of performed polynomial regression approximation and key points calc
 	\label{fig:regr-kp}
 \end{figure}
 
-\section{Similarity measure calculation}
+\subsection{Trajectories Approximation using RDP Algorithm}
+
+In comparison with the Polynomial Regression method, the accuracy of the RDP algorithm can be managed by changing the maximum distance $\varepsilon$ for the traditional RDP and by changing the $N$ value for the Douglas-Peucker N. 
+
+Simplified trajectories obtained by applying the Douglas-Peucker N algorithm are presented in Figure \ref{fig:rdp-n-res} for the parameter value $N = 9$ desired amount of simplification points.
+
+\begin{figure}[!htb]
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-curve-1.png}
+		\caption{curve from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-turn.png}
+		\caption{turn from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.25\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-curve.png}
+		\caption{loop from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-straight-before.png}
+		\caption{straight trajectories $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-turns.png}
+		\caption{turns from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-long-3.png}
+		\caption{selection from $3.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-long-4.png}
+		\caption{selection from $4.txt$}
+	\end{subfigure}
+	
+	\caption{Results of Douglas-Peucker N simplification}
+	\label{fig:rdp-n-res}
+\end{figure}
+
+\section{Trajectories Analysis}
+
+\subsection{Similarity Measure Calculation}
 
 As it was mentioned before, LCSS measure will be used as a similarity measure. Consequently, LCSS distance will be calculated based on a LCSS similarity according to above mentioned formulas. It is worth noting that LCSS distance is symmetric and for pair of trajectories can be computed just once \cite{inproceedings:28_lcss_dsmt}.
 
@@ -226,13 +339,56 @@ Notwithstanding that the implementation of LCSS similarity measure exists in R p
 
 \lstinputlisting[caption={LCSS calculation}, label={lst:lcss-calc}] {listings/calcLCSS.java}
 
-\section{Clustering}
+\subsection{Clustering}
 
-Since no appropriate implementation of hierarchical clustering for trajectories with the use of LCSS distance and capable of taking an adaptable parameters values were found, the clustering as well as LCSS similarity calculation was written from scratch guided by Algorithm \ref{algo:ahc-descr} outlined above. The source code of clustering is given in Appendix C. 
+Since no appropriate implementation of hierarchical clustering for trajectories with the use of LCSS distance and capable of taking an adaptable parameters values were found, the clustering as well as LCSS similarity calculation was written from scratch guided by Algorithm \ref{algo:ahc-descr} outlined above. The source code of clustering is given in Appendix C. In accordance with the general workflow of the framework, the clustering is being initiated after the completion of parsing, filtering and approximation of the original trajectories and calculating the LCSS distance for each pair of trajectories (Listing \ref{lst:clust-call}).
 
-Clustering is done in an iterative way of joining two closest clusters into one with following recalculation of a clusters similarity (proximity) matrix. The clustering method takes as an input the $OUTPUT\_CLUSTERS\_COUNT$ parameter which controls when the clustering will stop. If no value is passed, it will be considered as 1 and the clustering will be done till all clusters are merged into one in concordance with the basic algorithm of agglomerative hierarchical clustering.
+\lstinputlisting[caption={Clustering initiation}, label={lst:clust-call}]{listings/clustCall.java}
 
+Clustering is done in an iterative way of joining two closest clusters into one with following recalculation of a clusters similarity (proximity) matrix. The clustering method takes as an input the $OUTPUT\_CLUSTERS\_COUNT$ parameter which controls when the clustering will stop and defines the total amount of resulting clusters. If no value is passed, it will be considered as 1 and the clustering will be done till all clusters are merged into one in concordance with the basic algorithm of agglomerative hierarchical clustering, or till the further joining becomes infeasible.
 
-\subsection{Clusters' modeling}
+\subsubsection{Clusters validation}
 
-Clusters modeling implementation
+As described earlier, cluster validation will be done using the Dunn Index (DI). Listing \ref{lst:di-calc} provides an implementation of the DI value calculation for the resulting clusters.
+
+\lstinputlisting[caption={DI calculation}, label={lst:di-calc}] {listings/diCalc.java}
+
+As it can be seen from the presented code listing, the DI calculation consists of two parts: first calculation of the minimum distance between all pairs of clusters ($minDist$), then computing the maximum diameter among the diameters of all clusters ($maxDiam$). Since the implementation is based on the assumption that trajectories in the clusters appear in ascending order of identifiers and in view of this the inner loop starts with an index that is 1 more than the external index of the cluster or trajectory, to simplify further calculations of DI the cluster trajectories will be ordered beforehand.
+
+\subsection{Clusters' Modeling}
+
+To implement cluster modeling, the $Cluster$ entity class was augmented by the $clusterModel$ attribute of the $Trajectory$ type which stores a representative trajectory for the current cluster. Listing \ref{lst:cm-calc} presents an implementation of the cluster model calculation. For each cluster, the trajectory with the smallest average LCSS distance to all other trajectories in the current cluster is being specified. This trajectory is chosen as a cluster model. In the case of clusters consisting of a single trajectory, this trajectory is considered to be a cluster model.
+
+\lstinputlisting[caption={Clusters' modeling}, label={lst:cm-calc}] {listings/cmCalc.java}
+
+The most representative cluster modeling results are shown in Figure \ref{fig:cm-res}. All trajectories belonging to the cluster are depicted using red dots, cluster models are highlighted in blue.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.7\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cm-1-from-8-0_95.png}
+		\caption{cluster 1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.7\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cm-3-from-8-0_95.png}
+		\caption{cluster 3}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.7\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cm-4-from-8-0_95.png}
+		\caption{cluster 4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.7\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cm-7-from-8-0_95.png}
+		\caption{cluster 7}
+	\end{subfigure}
+	
+	\caption{Results of clusters' modeling ($2.txt$)}
+	\label{fig:cm-res}
+\end{figure}

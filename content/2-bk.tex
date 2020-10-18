@@ -4,6 +4,7 @@
 This chapter is intended to give a background information, introduce useful definitions and basic concepts of approaches used in following chapters. Input data sources and related challenges will be discussed.
 
 \section{Input Data Sources}
+
 Tasks of frequent trajectories identification and outliers detection can be applied to different data sources, for example: GPS (Global Positioning System) devices and sensor networks, then trajectory data is collected by sensors on moving objects, which periodically transmit information about location over time, or video traffic surveillance cameras. This work will focus on working with latter type of input data sources.
 
 Video data from enforcement cameras is considered as a raw data and is not used directly as an input for implemented system. Raw video processing is done in a stand-alone tracking system. Tracking system takes raw video from enforcement cameras and handles it to perform the objects detection and converting the trajectory into a number of tracking points on images. Tracking points, containing such information as vehicle ID, timestamp, spatial coordinates, are used as an input.
@@ -11,16 +12,19 @@ Video data from enforcement cameras is considered as a raw data and is not used 
 \section{Trajectory Definition}
 
 Trajectories can be described as multi-dimensional sequences containing a temporally ordered list of locations along with any additional information \cite{article:1_survey_stdm}. So, since a trajectory, denoted as $\tau$ or $T$, represents consecutive positions of a moving target object in temporal domain, in a case of a single-camera surveillance data, it can be defined as:
+
 \begin{equation}
-	\tau = {(x_1, y_1, t_1), (x_2, y_2, t_2), \ldots, (x_n, y_n, t_n)}\\[3pt],
+	\tau = {(x_1, y_1, t_1), (x_2, y_2, t_2), \ldots, (x_n, y_n, t_n)}\\[3pt]
 \end{equation}
+
 where $(x_i, y_i)$ denotes the position of the target object in the image at time $t_i$ \cite{article:5_survey_tbsa}. According to this, trajectories can be represented as a sequence of 3D points, where 2D object is for geometric coordinates and the third dimension stores the time \cite{article:25_dhr_mvt_eesd}.
 
 Generally, trajectory data is raw and contain only minimum information such as position and time as well as the identifier of the tracking object. This information can be easily augmented by such detailed information as speed, acceleration and direction, since they can be extracted from the initial trajectory data \cite{article:12_dssto_mot}.
 
-\section{Trajectory Anomaly Definition}
+\subsection{Trajectory Anomaly Definition}
 
 Twenty-four-hour recording video surveillance cameras produce massive amounts of data about moving objects, and that increases the possibility that along with the normally behaving objects some of the moving objects will demonstrate abnormal behavior. Such exceptional behaviors can also be named as outliers, anomalies, abnormalities, exceptions, novelties or deviants \cite{article:11_eod_hdd}\cite{article:15_survey_ad}. Notwithstanding that no standardized way of deviation characterization exists, in statistics following definition can be found \cite{article:13_pdoos}:
+
 \begin{quote}
 	``An outlying observation, or outlier, is one that appears to deviate markedly from other members of the sample in which it occurs''.
 \end{quote}
@@ -32,21 +36,24 @@ The process of outlier detection is intended to reveal unusual patterns that dra
 \subsection{Trajectory Anomalies Classification}
 
 According to the literature, trajectory anomalies can be categorized as follows \cite{article:15_survey_ad}\cite{article:6_survey_anom_det_rtuvs}\cite{article:comp_analys_odt}:
+
 \begin{itemize}
-	\item \textit{Point anomaly} - represents the simplest type of anomalies. Corresponds to an individual data instance which is considered as an abnormal one with respect to the rest of data, since it deviates significantly from all other samples in a data set. For example, a non-moving car on a busy road.
-	\item \textit{Contextual anomaly} - corresponds to a data instance which is considered as anomalous in a specific context, but as normal otherwise. It can be also understood as a point anomaly in a neighboring of the data point itself. Contextual anomalies are also referred as conditional anomalies and represent the most common group of categories applicable to spatial and time-series data. For example, trajectories can be classified based on the spatial data (coordinates) in the scope of a time. Examples of a contextual anomaly may be trajectories of a vehicle moving with a much higher speed comparing to others in the same traffic flow or of a vehicle driving in the opposite direction.
-	\item \textit{Collective anomalies} - a set of data instances, cooccurence of which as a group is considered as an anomaly with respect to the whole data set, while each data instance individually does not necessarily represent an anomaly. The given definition can be simplified to a set of neighboring point anomalies or context anomalies. Collective anomalies can only be applied to data sets with a relation between data instances.
+	\setlength\itemsep{0em}
+	\item \textit{Point anomaly} -- represents the simplest type of anomalies. Corresponds to an individual data instance which is considered as an abnormal one with respect to the rest of data, since it deviates significantly from all other samples in a data set. For example, a non-moving car on a busy road.
+	\item \textit{Contextual anomaly} -- corresponds to a data instance which is considered as anomalous in a specific context, but as normal otherwise. It can be also understood as a point anomaly in a neighboring of the data point itself. Contextual anomalies are also referred as conditional anomalies and represent the most common group of categories applicable to spatial and time-series data. For example, trajectories can be classified based on the spatial data (coordinates) in the scope of a time. Examples of a contextual anomaly may be trajectories of a vehicle moving with a much higher speed comparing to others in the same traffic flow or of a vehicle driving in the opposite direction.
+	\item \textit{Collective anomalies} -- a set of data instances, cooccurence of which as a group is considered as an anomaly with respect to the whole data set, while each data instance individually does not necessarily represent an anomaly. The given definition can be simplified to a set of neighboring point anomalies or context anomalies. Collective anomalies can only be applied to data sets with a relation between data instances.
 \end{itemize}
  
 The other way of trajectory outliers systematization may be dividing them into following categories according to the properties, which were used to perform classification: 
+
 \begin{itemize}
-	\item \textit{Spatial trajectory anomaly} - classification process takes into consideration only spatial information of moving object trajectories, such as position coordinates. Examples of spatial anomalies can be illegal U-turns, double line crossing or moving in an opposite direction.
-	\item \textit{Temporal trajectory anomaly} - corresponds to anomalies detected by analyzing only temporal characteristics of trajectories, such as duration, time of moving. For example, a trajectory with significantly long duration or a trajectory appearing at an anomalous time.
-	\item \textit{Spatiotemporal trajectory anomaly} - can be detected by analyzing spatial and temporal information in aggregate. Examples of ST anomalies can be vehicles moving with a considerably high speed comparing with majority of trajectories. Also such anomalies can be detected in the case of a contra-flow traffic systems with a reversing traffic light anomalous trajectories: since for such a line allowed direction changes according to some known or learned schedule, classifier can analyze the trajectory direction together with a temporal information.
+	\setlength\itemsep{0em}
+	\item \textit{Spatial trajectory anomaly} -- classification process takes into consideration only spatial information of moving object trajectories, such as position coordinates. Examples of spatial anomalies can be illegal U-turns, double line crossing or moving in an opposite direction.
+	\item \textit{Temporal trajectory anomaly} -- corresponds to anomalies detected by analyzing only temporal characteristics of trajectories, such as duration, time of moving. For example, a trajectory with significantly long duration or a trajectory appearing at an anomalous time.
+	\item \textit{Spatiotemporal trajectory anomaly} -- can be detected by analyzing spatial and temporal information in aggregate. Examples of ST anomalies can be vehicles moving with a considerably high speed comparing with majority of trajectories. Also such anomalies can be detected in the case of a contra-flow traffic systems with a reversing traffic light anomalous trajectories: since for such a line allowed direction changes according to some known or learned schedule, classifier can analyze the trajectory direction together with a temporal information.
 \end{itemize}
 
 In accordance with the second classification, the current work will focus on determining trajectory anomalies of the first and third types (spatial and spatiotemporal trajectory anomalies).
-
 
 \section{Challenges}
 Since ST data differs from other types of data in many aspects, challenges are related to the used data type. A unique quality of it is that ST data instances are not independent and identically distributed, as it is usually assumed to be in many of existing data mining approaches. On the contrary, ST data instances, related to observations made by nearby locations and time, are structurally correlated with each other in context of space and time, and it is important to take into consideration the presence of dependencies among measurements in these dimensions. Consequently, many of the existing data mining approaches are not applicable to ST data, since ignoring the aforementioned characteristics can result in poor accuracy of results. This leads to the necessity of investigating and using different methods for processing such a data to preserve all the relations between information domains \cite{article:1_survey_stdm}.
@@ -56,7 +63,9 @@ Since ST data differs from other types of data in many aspects, challenges are r
 It should be noted that the chosen type of an input source leads to difficulties in processing. Since trajectory data is acquired by video enforcement cameras, the first problem is an uncertainty of a location as a result of limitations in measurement accuracy of the used cameras, resolution and the quality of the received images or frame jitter \cite{article:4_detect_eatp}. Moreover, enforcement cameras are placed at some fixed locations on an intersection, because of that one of the particularities of used data are pose and perspective, which can cause challenges while dealing with input video data \cite{article:6_survey_anom_det_rtuvs}. The view angle of the camera in respect to the scene ground plane and distance between the tracked object and camera can affect the performance by decreasing the accuracy of objects detection and tracking: the smaller the angle - the bigger is the problem of determining the center of an object \cite{article:9_trb_vc_aev_sc}\cite{article:4_detect_eatp}. Tracked objects can drive in and out of the camera view, but be still detected while partially visible. This can cause trajectory changes on the borders of the camera scene: displacing and shifting of vehicle trajectories depending on the location of an object in respect to the camera \cite{article:4_detect_eatp}. Quality of the performed trajectory analysis also depends on the input trajectory data, including: quality of used cameras, quality of a tracking system, which converts a video data into a list of trajectories consisting of tracking points.
 
 Moreover, in the current thesis work input data contains trajectories extracted from video cameras without sorting and analyzing, so:
+
 \begin{enumerate}
+	\setlength\itemsep{0em}
 	\item input data set can contain both examples of normal and anomalous trajectories;
 	\item input data does not contain labels.
 \end{enumerate}

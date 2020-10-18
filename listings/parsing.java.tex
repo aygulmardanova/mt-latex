@@ -24,23 +24,18 @@ public class TrajectoriesParser {
 	
 	private boolean trajectoryStarted = false;
 	private boolean trajectoryCoordinatesStarted = false;
-	private int indexOfT;
-	private int indexOfTP;
+	private int indexOfT, indexOfTP;
 	
-	private StringBuilder x;
-	private StringBuilder y;
-	private StringBuilder t;
+	private StringBuilder x, y, t;
 	
 	private List<TrajectoryPoint> trajectoryPoints;
 	private List<Trajectory> trajectories;
 	
 	public TrajectoriesParser() {
 		openingSqBracketNumber = 0;
-		indexOfT = 0;
-		indexOfTP = 0;
+		indexOfT = 0, indexOfTP = 0;
 		
-		x = new StringBuilder();
-		y = new StringBuilder();
+		x = new StringBuilder(), y = new StringBuilder();
 		t = new StringBuilder();
 		
 		trajectoryPoints = new ArrayList<>();
@@ -60,7 +55,7 @@ public class TrajectoriesParser {
 		while ((intch = reader.read()) != -1) {
 			char nextChar = (char) intch;
 			while ((nextChar == ',' || nextChar == ' '))
-			nextChar = (char) reader.read();
+				nextChar = (char) reader.read();
 			while (nextChar == '[') {
 				increaseOpeningSqBracketsCount();
 				nextChar = (char) reader.read();
@@ -76,7 +71,7 @@ public class TrajectoriesParser {
 			}
 			nextChar = (char) reader.read();
 			while ((nextChar == ',' || nextChar == ' '))
-			nextChar = (char) reader.read();
+				nextChar = (char) reader.read();
 			if (trajectoryStarted) {
 				if (nextChar == '[') {
 					increaseOpeningSqBracketsCount();
@@ -137,7 +132,8 @@ public class TrajectoriesParser {
 			if (nextChar == ']') {
 				increaseClosingSqBracketsCount();
 			}
-			trajectoryPoints.get(indexOfTP).setTime(Integer.parseInt(t.toString().trim()));
+			trajectoryPoints.get(indexOfTP).setTime(
+				Integer.parseInt(t.toString().trim()));
 			indexOfTP++;
 			t = new StringBuilder();
 			nextChar = (char) reader.read();
@@ -177,8 +173,7 @@ public class TrajectoriesParser {
 		);
 		trajectoryPoints.add(point);
 		
-		x = new StringBuilder();
-		y = new StringBuilder();
+		x = new StringBuilder(), y = new StringBuilder();
 	}
 	
 }

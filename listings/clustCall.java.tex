@@ -1,0 +1,19 @@
+// parsing
+List<Trajectory> trajectories = parseTrajectories(inputFileName);
+
+// filtering
+trajectories = trajectories.stream().filter(tr -> 
+		tr.length() > MIN_LENGTH && tr.totalDist() >= MIN_TOTAL_DIST)
+	.collect(toList());
+
+// approximation
+performRegression(trajectories, input);
+
+// calculate LCSS distances
+Double[][] trajLCSSDistances = calcLCSSDistances(trajectories);
+
+// clustering
+List<Cluster> clusters = new Clustering().cluster(trajectories);
+
+// clusters visualization
+displayClusters(inputImgFileName, clusters);

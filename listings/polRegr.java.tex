@@ -50,7 +50,9 @@ double avgR2forY = trajectories.stream()
 	.average().getAsDouble();
 
 // print results
-LOGGER.info("min R2 for X is for trajectory {}: {}", minR2forXid, minR2forX);
+LOGGER.info("min R2 for X is for trajectory {}: {}", 
+	minR2forXid, minR2forX);
 LOGGER.info("avg R2 for X is: {}", avgR2forX);
-LOGGER.info("min R2 for Y is for trajectory {}: {}", minR2forYid, minR2forY);
+LOGGER.info("min R2 for Y is for trajectory {}: {}", 
+	minR2forYid, minR2forY);
 LOGGER.info("avg R2 for Y is: {}", avgR2forY);

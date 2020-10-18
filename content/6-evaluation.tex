@@ -7,11 +7,11 @@ This chapter describes the evaluation tests performed on the proposed approach o
 
 This section gives details about evaluation tests performed to validate the accuracy of obtained results.
 
-\subsection{Trajectories Approximation Results}
+\subsection{Results of Trajectories Approximation using Polynomial Regression}
 
-To make a decision about a degree of an approximation polynomials, several experiments were run trying to fit the input trajectories into polynomials of 3\up{rd}, 4\up{th}, 5\up{th} degrees respectively. The following table depicts minimum and average values of $R^2$ metric for each of the experiments (Table \ref{table:r2_res}). 
+To make a decision about degrees of approximation polynomials, several experiments were run trying to fit the input trajectories into polynomials of 3\up{rd}, 4\up{th}, 5\up{th} degrees respectively. The following table depicts minimum and average values of $R^2$ metric for each of the experiments (Table \ref{table:r2_res}). 
 
-\begin{table}[h!]
+\begin{table}[htb!]
 	\caption{$R^2$ values for different degrees of polynomials}
 	\label{table:r2_res}
 	
@@ -53,36 +53,37 @@ To make a decision about a degree of an approximation polynomials, several exper
 		\hline
 	\end{tabular}
 \end{table}
-\todo{Last column formatting...}
 
-This paragraph will discuss results of experiments using trajectories from first intersecton ($1.txt$) before and after filtering the trajectories. It can be seen from the Table \ref{table:r2_res} that the average values of $R^2$ score are acceptable for all the experiments. However, the minimum $R^2$ values, which are equal to 0,66 and 0,466 for the first experiment with only 3\up{rd}-degree polynomials for unfiltered trajectories, are poor and unsatisfactory, meaning that model can predict barely half of the points for some trajectories correctly. Filtering out trajectories with short displacements in terms of both space and time improved the results significantly. However, results for approximation using 3\up{rd}-degree polynomials are still insufficient. This can affect following analysis and worsen further analysis. For that reason approximation using several degrees was performed in a following way: 
+This paragraph will discuss results of experiments using trajectories from first intersection ($1.txt$) before and after filtering the trajectories. It can be seen from the Table \ref{table:r2_res} that the average values of $R^2$ score are acceptable for all the experiments. However, the minimum $R^2$ values, which are equal to 0,66 and 0,466 for the first experiment with only 3\up{rd}-degree polynomials for unfiltered trajectories, are poor and unsatisfactory, meaning that model can predict barely half of the points for some trajectories correctly. Filtering out trajectories with short displacements in terms of both space and time improved the results significantly. However, results for approximation using 3\up{rd}-degree polynomials are still insufficient. This can affect following analysis and worsen further analysis. For that reason approximation using several degrees was performed in a following way:
+
 \begin{enumerate}
+	\setlength\itemsep{0em}
 	\item firstly perform approximation using the lowest degree of a polynomial as a starting point,
 	\item compare the obtained $R^2$ with a predefined threshold (0,98 in this case); if the obtained value is less than the threshold value, increase the degree and reperform polynomial regression,
 	\item continue till the acceptable $R^2$ is obtained or till reaching the limit for a polynomial degree to check (5 in this case). 
 \end{enumerate} 
 
-Approximation using 3\up{rd} and 4\up{th} degree polynomials in conjunction improved both minimum and average values of $R^2$ drastically. Though adding a 5\up{th} degree polynomial into consideration did not affect results significantly and improved the average coefficient only for 0,01 in comparison with the previous experiment. In view of this it was decided to focus on approximation using 3\up{rd} and 4\up{th} degrees and run the experiments on the rest of input trajectories data sets ($2.txt$, $3.txt$, $4.txt$).
+Approximation using 3\up{rd} and 4\up{th} degree polynomials in conjunction improved both minimum and average values of $R^2$ drastically. Though adding a 5\up{th} degree polynomial into consideration did not affect results significantly and improved the average coefficient only for 0,01 in comparison with the previous experiment. In view of this it was decided to focus on approximation using 3\up{rd} and 4\up{th} degrees and run the experiments on rest of input trajectories data sets ($2.txt$, $3.txt$, $4.txt$).
 
 For the sake of simplicity the trajectories are classified into two groups depending on a degree of polynomials used to approximate: first group contains trajectories approximated with a 3\up{rd} degree polynomial functions while the second group consists of trajectories approximated with a 4\up{th} degree polynomial functions. Both groups were analyzed in terms of a shape and an average speed. Figure \ref{fig:regr-pol-4} depicts second group of trajectories and Table \ref{table:speeds} gives the minimum, average and maximum speed of trajectories for both groups.
 
-\begin{figure}
+\begin{figure}[!htb]
 	\centering
-	\begin{subfigure}[b]{0.3\textwidth}
+	\begin{subfigure}[!htb]{0.3\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/regr_1_pol_4.jpg}
 		\caption{$1.txt$}
 		\label{fig:regr-1-pol-4}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}[b]{0.3\textwidth}
+	\begin{subfigure}[!htb]{0.3\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/regr_3_pol_4.png}
 		\caption{$3.txt$}
 		\label{fig:regr-3-pol-4}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}[b]{0.3\textwidth}
+	\begin{subfigure}[!htb]{0.3\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/regr_4_pol_4.png}
 		\caption{$4.txt$}
@@ -92,7 +93,7 @@ For the sake of simplicity the trajectories are classified into two groups depen
 	\label{fig:regr-pol-4}
 \end{figure}
 
-\begin{table}[h!]
+\begin{table}[htb!]
 	\caption{Overview of min, avg and max speeds of vehicles}
 	\label{table:speeds}
 	
@@ -143,15 +144,364 @@ For the sake of simplicity the trajectories are classified into two groups depen
 	\end{tabular}
 \end{table}
 
-Thereinafter the trajectories approximated with 3\up{rd}- and 4\up{th}-degree polynomial functions will be referred to as a first and second groups of trajectories respectively. It can be observed that trajectories approximated with 3\up{rd}- and 4\up{th}-degree polynomial functions have the widely different speeds. The first group includes trajectories with much higher speeds, particularly striking is that the maximum speed for the second group is almost equal to average speed for the first group and the average speed for the first group is almost four times as much as for the second group for the case of unfiltered trajectories. After excluding the short trajectories from the consideration results became more smooth, however the same observation still takes place and is still noticeable. Also the picture depicts that 4\up{th}-degree polynomial functions were used to approximate trajectories of complex shape or trajectories with densely located trajectory points. 
+Thereinafter the trajectories approximated with 3\up{rd}- and 4\up{th}-degree polynomial functions will be referred to as a first and second groups of trajectories respectively. It can be observed that trajectories different groups have the widely differing speeds. The first group includes trajectories with much higher speeds, particularly striking is that the maximum speed for the second group is almost equal to average speed for the first group and the average speed for the first group is almost four times as much as for the second group for the case of unfiltered trajectories. After excluding the short trajectories from the consideration results became more smooth, however the same observation still takes place and is still noticeable. Also the picture depicts that 4\up{th}-degree polynomial functions were used to approximate trajectories of complex shape or trajectories with densely located trajectory points. 
 
 Such a tendency is mostly distinguishable while considering trajectories from the first intersection, which can supposed to be the representative set of trajectories since it has the largest amount of data instances. It is also worth noting that the second trajectories data set ($2.txt$) has only 10 trajectories in the first group, hence the trajectories speed analysis can not be very accurate.
 
 \subsubsection{Summary}
 
 Hence, it follows up that the higher-order polynomial functions are preferred to approximate trajectories of following groups:
+
 \begin{itemize}
+	\setlength\itemsep{0em}
 	\item slow-moving or inactive vehicle trajectories (including trajectories of vehicles waiting at the intersections), detectable on Figure \ref{fig:regr-1-pol-4};
 	\item vehicle trajectories with a non-constant speed or an acceleration on some sections of a path (can be represented by non-equal allocation of trajectory points, where dense areas of trajectory points signalize about acceleration during these time intervals; as a result low-order polynomial can not describe such a complex dependency between a coordinate and a time);
 	\item trajectories of complex shapes (sharp turns, Pascal snails), especially recognizable on Figures \ref{fig:regr-pol-4}b-c.
 \end{itemize}
+
+\subsection{Results of Trajectories Approximation using RDP Algorithm}
+
+\subsubsection{Traditional RDP Algorithm}
+
+Comparison of total length of approximated trajectories and the positional errors are presented in Table \ref{table:rdp_length_pos_err}. As it can be seen, starting from the $\varepsilon = 2.0$ approximation results are not usable. For the case of $\varepsilon = 2.0$ the average length of approximated trajectory is equal to the desired length, however many trajectories remain too long.
+
+\begin{table}[htb!]
+	\caption{Overview of min, avg and max length and positional errors for trajectories, approximated with RDP algorithm}
+	\label{table:rdp_length_pos_err}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\begin{tabular}[c]{|| C{2cm} C{2cm} C{2cm} | C{2cm} C{2cm} C{2cm} ||} 
+		\hline
+
+		\multicolumn{3}{||c|}{Length \textit{(TPs)}} & \multicolumn{3}{c||}{Positional Error \textit{(pixels)}} \\[1ex]\cline{1-6}
+		min 	& avg	& max	& min 	& avg	& max 	\\ [2ex]
+		
+		\hline \hline
+		\multicolumn{6}{||c||}{$\varepsilon = 0.5$} 	\\ [0.5ex]
+		2 		& 11 	& 43 	& 0.0 	& 3.1 	& 11.03 \\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$\varepsilon = 1.0$} 	\\ [0.5ex]
+		2 		& 6.4 	& 33 	& 0.0 	& 7.2 	& 30.68 \\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$\varepsilon = 1.5$} 	\\ [0.5ex]
+		2 		& 5.35 	& 31 	& 0.0 	& 10.26 & 39.24 \\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$\varepsilon = 2.0$} 	\\ [0.5ex]
+		2 		& 4.7 	& 24 	& 0.0 	& 14.1 	& 61.3 	\\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$\varepsilon = 10.0$} 	\\ [0.5ex]
+		2 		& 2.64 	& 13 	& 0.0 	& 72.117 	& 354.62 	\\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$\varepsilon = 10.5$} 	\\ [0.5ex]
+		2 		& 2.6 	& 12 	& 0.0 	& 77.66 	& 505.73 	\\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$\varepsilon = 11.0$} 	\\ [0.5ex]
+		2 		& 2.24 	& 7 	& 0.0 	& 137.31 	& 1035.12 	\\ [2ex]
+		
+		\hline
+		
+	\end{tabular}
+\end{table}
+
+However, notwithstanding that traditional RDP algorithm chooses adequate, representative points, it does not guarantee the exact amount of resulting points. Moreover, for trajectories of vehicles moving in a straightforward direction, meaning all original trajectory points are on a straight line, RDP algorithm will keep only first and last points. Such a behavior describes the trajectory form accurately, but do not appropriate to use for clustering. That leads to the necessity to perform a completion of approximation points by calculating additional key points.
+
+\subsubsection{Douglas-Peucker N Algorithm}
+
+the same comparison is performed for the Douglas-Peucker N Algorithm for different values of $N$, results are given in Table \ref{table:rdp_n_length_pos_err}. The minimum length is equal to 2, meaning that trajectory points are located on a straight line, and the trajectory coincides with the initial simplifying line, consisting of the first and last trajectory points (Figure \ref{fig:rdp_2_points_only}). Notwithstanding that, the average length is almost equal to the desired $N$ value. Moreover, as expected, increase of $N$ value leads to the decrease of the positional error. Trajectories approximated by only first and last points will be complemented by calculating middle points to fulfill the desired maximum amount of trajectory points in a simplified trajectory (Figure \ref{fig:rdp_2_points_filled}). Some of the points are redundant, but improve the clustering results.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.9\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-2-points.png}
+		\caption{before adding middle points}
+		\label{fig:rdp_2_points_only}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.9\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-2-points-filled.png}
+		\caption{$3.txt$}
+		\label{fig:rdp_2_points_filled}
+	\end{subfigure}
+	\caption{complemented by middle points}
+	\label{fig:rdp_2_points}
+\end{figure}
+
+\begin{table}[htb!]
+	\caption{Overview of min, avg and max length and positional errors for trajectories, approximated with Douglas-Peucker N algorithm}
+	\label{table:rdp_n_length_pos_err}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\begin{tabular}[c]{|| C{2cm} C{2cm} C{2cm} | C{2cm} C{2cm} C{2cm} ||} 
+		\hline
+		
+		\multicolumn{3}{||c|}{Length \textit{(TPs)}} & \multicolumn{3}{c||}{Positional Error \textit{(pixels)}} \\[1ex]\cline{1-6}
+		min 	& avg	& max	& min 	& avg	& max 	\\ [2ex]
+		
+		\hline \hline
+		\multicolumn{6}{||c||}{$N = 7$} 	\\ [0.5ex]
+		2 		& 6.86 	& 7 	& 0.0 	& 12.2 	& 472.36 \\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$N = 8$} 	\\ [0.5ex]
+		2 		& 7.82 	& 8 	& 0.0 	& 9.26 	& 388.85 \\ [2ex]
+
+		\hline
+		\multicolumn{6}{||c||}{$N = 9$} 	\\ [0.5ex]
+		2 		& 8.76 	& 9 	& 0.0 	& 7.38 	& 340.56 \\ [2ex]
+		
+		\hline
+		
+	\end{tabular}
+\end{table}
+
+\subsubsection{Summary}
+
+In order to choose between aforementioned implemented approximation methods, the obtained results need to be compared using the same accuracy evaluation method. For that the Positional errors metric was chosen. It can work with both algorithms, because Polynomial Regression, as well as Douglas-Peucker N, simplifies the input trajectory into a reduced number of key points. Positional error value demonstrates how far is the obtained simplified curve from the original.
+
+Results of comparison are given in Table \ref{table:pr_dpn_comparison}. For trajectories approximated using a Polynomial Regression positional errors are calculated on the set of final key points, consisting of the solutions of derivative equations, border and middle points.
+
+\begin{table}[htb!]
+	\caption{Comparison of min, avg, max lengths and positional errors for trajectories, simplified by Polynomial Regression and Douglas-Peucker N algorithms}
+	\label{table:pr_dpn_comparison}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\begin{tabular}[c]{|| C{2cm} C{2cm} C{2cm} | C{2cm} C{2cm} C{2cm} ||} 
+		\hline
+		
+		\multicolumn{3}{||c|}{Length \textit{(TPs)}} & \multicolumn{3}{c||}{Positional Error \textit{(pixels)}} \\[1ex]\cline{1-6}
+		min 	& avg	& max	& min 	& avg	& max 	\\ [2ex]
+		
+		\hline \hline
+		\multicolumn{6}{||c||}{$1.txt$} 						\\ [0.5ex]
+		\hline
+		\multicolumn{6}{||c||}{Polynomial Regression, $N = 9$} 	\\ [0.5ex]
+		6 		& 8.34 	& 9 	& 0.0 	& 29.18 	& 959.48 \\ [2ex]
+		\hline
+		\multicolumn{6}{||c||}{Douglas-Peucker N, $N = 9$} 	\\ [0.5ex]
+		7 		& 8.97 	& 9 	& 0.0 	& 7.26 		& 340.56 \\ [2ex]
+		
+		\hline \hline
+		\multicolumn{6}{||c||}{$2.txt$} 						\\ [0.5ex]
+		\hline
+		\multicolumn{6}{||c||}{Polynomial Regression, $N = 9$} 	\\ [0.5ex]
+		6 		& 8.18 	& 9 	& 0.1 	& 21.01 	& 870.94 \\ [2ex]
+		\hline
+		\multicolumn{6}{||c||}{Douglas-Peucker N, $N = 9$} 	\\ [0.5ex]
+		7 		& 8.97 	& 9 	& 0.0 	& 4.9 		& 92.82 \\ [2ex]
+
+		\hline \hline
+		\multicolumn{6}{||c||}{$3.txt$} 						\\ [0.5ex]
+		\hline
+		\multicolumn{6}{||c||}{Polynomial Regression, $N = 9$} 	\\ [0.5ex]
+		6 		& 8.46 	& 9 	& 0.74 	& 91.32 	& 2015.24 \\ [2ex]
+		\hline
+		\multicolumn{6}{||c||}{Douglas-Peucker N, $N = 9$} 	\\ [0.5ex]
+		8 		& 8.99 	& 9 	& 0.0 	& 20.36		& 258.09 \\ [2ex]
+
+		\hline \hline
+		\multicolumn{6}{||c||}{$4.txt$} 						\\ [0.5ex]
+		\hline
+		\multicolumn{6}{||c||}{Polynomial Regression, $N = 9$} 	\\ [0.5ex]
+		7 		& 8.42 	& 9 	& 0.87 	& 74.10 	& 1423.47 \\ [2ex]
+		\hline
+		\multicolumn{6}{||c||}{Douglas-Peucker N, $N = 9$} 	\\ [0.5ex]
+		8 		& 8.98 	& 9 	& 0.0 	& 14.11 	& 299.45 \\ [2ex]
+		
+		\hline
+	\end{tabular}
+\end{table}
+
+As it can be seen, Douglas-Peucker N algorithm leads to much more accurate results with smaller positional errors and desired average length of simplified trajectories for all the input files with trajectories.
+
+\subsection{Trajectories Clustering Results}
+
+To compare the clustering results, several experiments were carried out on different input data ($1.txt$, $2.txt$), using static and adaptive values of the $\varepsilon$ parameter, with a different number of final clusters (7, 8, 9). The obtained clusters were validated in two ways: visual test and DI value. The results of the experiments and their discussion will be presented below.
+
+To evaluate the efficiency of using the adaptive values of the $\varepsilon$ parameter, and compare them with the results when using static values, clustering was performed on the data from the first intersection ($1.txt$) for 7, 8 and 9 resulting clusters at different values of the coefficient participating in the formulas for calculating $\varepsilon$ (\ref{eq:delta-adapt}-\ref{eq:epsY-adapt}):
+
+$static: coeff = \{\bm{0.1}, \bm{0.15}, \ldots\}$
+
+$adaptive: coeff = \{0.15, \bm{0.20}, \ldots, 0.25, \ldots\}$
+
+Hence, in LCSS metric calculation algorithm the static and adaptive parameters $\delta$ and $\varepsilon$ were implemented. The following relations were chosen as the functional relationship between the $\varepsilon$ parameter and the distance between the trajectory point and the camera:
+
+\begin{equation} \label{eq:delta-adapt}
+	\delta = coeff_\delta * \min{(t1.length(), t2.length())}
+\end{equation}
+
+\begin{equation} \label{eq:epsX-st}
+	static:\ \ \ \ \varepsilon_x = coeff_\varepsilon * (maxX - minX)
+\end{equation}
+
+\begin{equation} \label{eq:epsY-st}
+	static:\ \ \ \ \varepsilon_y = coeff_\varepsilon * (maxY - minY)
+\end{equation}
+
+\begin{equation} \label{eq:epsX-adapt}
+	adaptive:\ \ \ \ \varepsilon_x = coeff_\varepsilon * \frac{(maxX - minX)}{distToCP}
+\end{equation}
+
+\begin{equation} \label{eq:epsY-adapt}
+	adaptive:\ \ \ \ \varepsilon_y = coeff_\varepsilon * \frac{(maxY - minY)}{distToCP}
+\end{equation}
+
+where $distToCP$ is calculated as an Euclidean distance between the given point of the trajectory and the point where the camera is located at the current intersection, and $coeff_\varepsilon$ is the coefficient, the value of which will be selected experimentally from the set of the above mentioned. The following will show the results for the highlighted values of the $coeff_\varepsilon$ parameter.
+
+In this case, when comparing the clustering results using the static parameter $\varepsilon$, best results were obtained with the value of coefficient $coeff = 20.0$, for the adaptive parameter -- for the value of coefficient $coeff = 20.0$.
+
+The values of the static parameter $\varepsilon$ for each of the axes with different values of the coefficients are presented in Table \ref{table:eps_st}.
+
+\begin{table}[htb!]
+	\caption{Values of static $\varepsilon$ parameter for different coefficient values}
+	\label{table:eps_st}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	
+	\begin{tabular}
+		{||lllll|lllll||}
+		\multicolumn{10}{c}{static $\varepsilon$} \\[0.5ex]
+		\hline
+		\multicolumn{5}{||c}{$\bm{\varepsilon}\ (coeff = 0.10)$} & \multicolumn{5}{c||}{$\bm{\varepsilon}\ (coeff = 0.15)$} \\[0.5ex]
+		$X:$       			& & & & & & & & & \\[0.5ex]
+		& avg 	& = 	& 123.7 	& (pixels) & avg 	& = 	& 186 	& (pixels) &\\[0.5ex]
+		$Y:$       			& & & & & & & & & \\[0.5ex]
+		& avg 	& = 	& 56	 	& (pixels) & avg 	& = 	& 86 	& (pixels) &\\[0.5ex]
+		\hline
+	\end{tabular}
+\end{table}
+
+The statistics of the minimum, average and maximum values of the adaptive $\varepsilon$ for each of the axes are presented in Table \ref{table:eps_adapt}.
+
+\begin{table}[!htb]
+	\caption{Values of adaptive $\varepsilon$ parameter for different coefficient values}
+	\label{table:eps_adapt}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	
+	\begin{tabular}{||lllll||}
+		\multicolumn{5}{c}{adaptive $\varepsilon$} \\
+		\hline
+		\multicolumn{5}{||c||}{$\bm{\varepsilon}\ (coeff = 20.0)$}\\
+		$X:$       			& & & & \\[0.5ex]
+		& max 	& = 	& 351.397 	& (pixels) \\[0.5ex]
+		& min 	& = 	& 23.248 	& (pixels) \\[0.5ex]
+		& avg 	& = 	& 187.32 	& (pixels) \\[0.5ex]
+		$Y:$       			& & & & \\[0.5ex]
+		& max 	& = 	& 151.252 	& (pixels) \\[0.5ex]
+		& min 	& = 	& 10.004 	& (pixels) \\[0.5ex]
+		& avg 	& = 	& 80.63 	& (pixels) \\[0.5ex]
+		\hline
+	\end{tabular}
+\end{table}
+
+As it can be seen from the given tables, static values of the $\varepsilon$ parameter at the coefficient $coeff_\varepsilon = 0.15$ are approximately equal to the average values of the adaptive $\varepsilon$ values at the coefficient $coeff_varepsilon = 20.0$. Consequently, it can be expected that the static $\varepsilon$ values ​​at this coefficient value will show the best results.
+
+The comparison of static $\varepsilon$ values was carried out with the coefficients $0.10$ and $0.15$. The experimental results for the data from the first and second intersections are presented in Tables \ref{table:st_eps_res_1}-\ref{table:st_eps_res_2}. Visualization of corresponding clustering results is given in Appendix D.
+
+\begin{table}[htb!]
+	\caption{Comparison of DI values for static $\varepsilon$ parameter ($1.txt$)}
+	\label{table:st_eps_res_1}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\setcellgapes{3pt}\makegapedcells
+	
+	\begin{tabular}{||c|lc|lc||}
+		\hline
+		\multirow{2}{3em}{\# of clusters}      & \multicolumn{2}{c|}{$(coeff = 0.1)$} & \multicolumn{2}{c||}{$(coeff = 0.15)$} \\[0.5ex]
+		& DI & comment & DI & comment \\[0.5ex]
+		\hline
+		\multicolumn{5}{||c||}{$1.txt$} \\[0.5ex]
+		7 	& 0.88 	& \makecell{for the right line pattern \\(cluster) of trajectories \\representing straightward \\driving is joined with the \\pattern of turning to the \\right (light blue); \\pattern of horizontal \\driving from the left \\to the right is joined \\with the pattern of \\turning (red)}
+		& 0.68 	& \makecell{imprecise distant \\trajectories; turning to \\the right from the right \\line is not detected} \\[0.5ex]
+		8	& 0.83	& \makecell{for the right lane, the \\pattern (cluster) of \\straightward movement is \\merged with the pattern of \\turning to the right \\from the last right line \\(light pink)} 			
+		& \textbf{0.63} 	& \textbf{\makecell{the most distant cluster is \\ merged with the cluster of \\turning to the right (red)}} \\[0.5ex]
+		9 	& \textbf{0.77} 	& \textbf{\makecell{recognizable pattern of \\turning to the right \\from the last right line; \\distinguishable patterns \\of a straightward moving \\from left to right and \\turning to the right from \\the last right line}} 			
+		& 0.62 	& \makecell{anomalous cluster in the \\center of the image (pink) \\is located on top of the \\cluster, representing the \\straightward movement from \\a distance} \\[0.5ex]
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[!htb]
+	\caption{Comparison of DI values for static $\varepsilon$ parameter ($2.txt$)}
+	\label{table:st_eps_res_2}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\setcellgapes{3pt}\makegapedcells
+	
+	\begin{tabular}{||c|lc|lc||}
+		\hline
+		\multirow{2}{3em}{\# of clusters}      & \multicolumn{2}{c|}{$(coeff = 0.1)$} & \multicolumn{2}{c||}{$(coeff = 0.15)$} \\[0.5ex]
+		& DI & comment & DI & comment \\[0.5ex]
+		\hline
+		\multicolumn{5}{||c||}{$2.txt$} \\[0.5ex]
+		7 	& 0.80 	& \makecell{central cluster comprises \\ too distant (different) \\trajectories, including \\straightward driving and \\turning (red)} 	
+		& 0.99 & \makecell{trajectory patterns, \\representing straightward \\movement from right to \\left and movement from left \\upward (to the left), are \\indistinguishable (blue)}\\[0.5ex]
+		8 	& 0.80 	& \makecell{major turns are \\distinguishable, separate \\cluster for \\long-distance trajectories} 						
+		& 0.99 & \makecell{trajectory patterns of \\turning from right to top \\(to the right) and \\from right to bottom \\(to the left) are \\indistinguishable}\\[0.5ex]
+		9 	& \textbf{0.78} 	& \textbf{\makecell{a separate cluster for \\a straightward movement \\without rounding (pink)}}	
+		& \textbf{0.99} & \textbf{\makecell{both aforementioned \\ clusters are \\ distinguishable}}\\[0.5ex]
+		\hline
+	\end{tabular}
+\end{table}
+
+According to the table, static $\varepsilon$ gives the best results for the amount of 9 resulting clusters. The best options, which were selected, are highlighted in bold.
+
+Data from the second intersection ($2.txt$) was used to carry out 3 experiments with a different number of final clusters: 7, 8 and 9. According to the experimental results, merging up to 8 clusters demonstrated more accurate data partitioning and higher DI values. The results of clustering on the example of data from the first intersection are shown in Figure \ref{fig:clust-res}, data clusters are displayed with different colors. On Figure \ref{fig:9cl-di-94} it is apparent that it is possible and advisable to further merge the clusters represented by yellow and green. Figure \ref{fig:8cl-di-95} depicts the result of further clustering (in this case, combining clusters), in which the two specified clusters were combined into one based on the small value of the distance between them (high degree of similarity). Figure \ref{fig:7cl-di-97} shows the result of subsequent merging of two clusters up to the final 7. It can be seen that a green cluster was merged into the red cluster, while visually that does not correspond to the actual similarity of the clusters: according to the visual test, the yellow and light pink clusters are the closest to be merged. Despite the fact that value of the DI index turned out to be higher, the visual test indicates that the obtained clusters are unsatisfactory. Thus, the most logical clustering option is clustering up to 8 clusters.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.8\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/9cl-di-94.png}
+		\caption{9 resulting clusters, DI = 0.94}
+		\label{fig:9cl-di-94}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.8\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/8cl-di-95.png}
+		\caption{8 resulting clusters, DI = 0.95}
+		\label{fig:8cl-di-95}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.8\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/7cl-di-97.png}
+		\caption{7 resulting clusters, DI = 0.97}
+		\label{fig:7cl-di-97}
+	\end{subfigure}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$, $coeff_\varepsilon = 20.0$ ($2.txt$)}
+	\label{fig:clust-res}
+\end{figure}
+
+Validation of the resulting clusters was carried out using the DI metric, the following values ​​were obtained:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item 9 clusters -- DI = 0.94,
+	\item \textbf{8 clusters -- DI = 0.95},
+	\item 7 clusters -- DI = 0.97 (visually invalid clusters).
+\end{itemize}
+
+However, despite the high DI value, it can be noticed that the clustering result contains errors: blue key points corresponding to the blue cluster of trajectories are superimposed on the trajectories of the red cluster. A possible reason for such a behavior is a high degree of similarity between these trajectories and trajectories from the blue cluster in the upper left half of the figure: this area is represented by a dense accumulation of blue dots.
+
+\subsubsection{Summary}
+
+From the above it follows that, based on the results of both the quantitative assessment of the DI metric and the visual test, resulting clusters are more accurate when clustering till distributing data across 8 clusters for data from both intersections. In other words, 7 clusters are not enough to describe the vehicle trajectory patterns at these intersections. However, when using the static $\varepsilon$ parameter, clustering is more accurate for 9 clusters for data from both intersections.
+
+Moreover, according to the results, the use of adaptive values ​for the$\varepsilon$ parameter improved the clustering results significantly.
