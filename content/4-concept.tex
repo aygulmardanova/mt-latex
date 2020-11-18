@@ -55,87 +55,6 @@ The implemented framework consists of several modules which are responsible for 
 	\label{fig:proj-arch}
 \end{figure}
 
-\section{Clustering}
-
-\subsection{Agglomerative Hierarchical Clustering}
-
-Clustering is done using an unsupervised agglomerative hierarchical clustering approach. The description of this approach is given in Algorithm \ref{algo:ahc-descr} \cite{inproceedings:7_related_work}.
-
-\begin{algorithm}[!htb]
-	\caption{Description of Agglomerative Hierarchical Clustering}
-	\label{algo:ahc-descr}
-	\SetAlgoLined
-	\KwIn{A Database of Trajectories: trajectories}
-	\KwOut{Clusters of Trajectories: clusters}
-	\textit{Initialization:} \\
-	- initialize the clusters with one trajectory in each cluster \\
-	\textit{Clusters merging:}\\
-	\While{number of clusters is greater than 1}{
-		- calculate similarity matrix D between pairs of clusters based on single linkage approach using LCSS similarity measure;\\
-		- find the smallest distance between clusters in D;\\
-		- merge two clusters with the corresponding smallest distance into a single cluster;\\
-		- remove two merged clusters;\\
-	}
-	
-\end{algorithm}
-
-As it was already mentioned, agglomerative hierarchical clustering methods suppose clusters joining, which requires the inter-cluster distance measure to be defined. In \cite{inproceedings:7_related_work} authors have performed evaluation of different linkage methods, including single link, complete link and average link. According to the performed tests, the single link method showed the best results and, in view of this, will be used as a linkage method in the current work.
-
-Single link linkage method considers a minimum distance between two trajectories as an inter-cluster distance and can be summed up as \cite{inproceedings:7_related_work}:
-
-\begin{equation} \label{eq:single_link}
-D_{min}(C_i, C_j) = \min_{T_1 \in C_i, T_2 \in C_j} D_{LCSS}(T_1, T_2),
-\end{equation} 
-
-where ($C_i$, $C_j$) denote two clusters and ($T_1$, $T_2$) correspond to two trajectories from two clusters respectively.
-
-\subsection{Normal and Anomalous Clusters Classification}
-
-Hereinafter the concept of the cluster cardinality, denoted as $|C|$, is used.
-The cardinality of a cluster refers to a number of trajectories in that cluster.
-
-Since the main objective of the current work is detection of anomalies by the way of trajectories clustering, following clusters' modeling and finally an input trajectory classification, the concepts of a normal and anomalous cluster must be introduced. Normal cluster is a cluster containing a relatively large amount of trajectories in comparison with others, meaning that such a vehicular behavior, defined by the cluster, is normal and allowed on the current intersection. Consequently, the clusters classification technique needs to be defined.
-
-To perform clusters classification, the analysis of a selection, obtained by calculating the cardinalities of resulting clusters, will be conducted using the order statistical measure, specifically quantile. Quantiles are the way of dividing the whole initial ordered data set into a predefined amount of segments \cite{inbook:stats}. The $\alpha$-quantile is a numerical value, which represents the characteristic of the distribution law of a random variable, according to which all values from this distribution with a fixed probability $\alpha$ (or $\alpha$\up{th} part of all values) do not exceed the specified $\alpha$-quantile value. In statistical analysis, the most frequently used quantiles are: median (dividing the entire set into 2 segments at the 50th percentile), quartile (dividing into 4 segments by 25, 50, 75\%), quintile (5 segments), decile (10 segments), percentile (100 segments). In the current work, it was decided to use the 0.25-quantile (lower, first quartile) as the threshold value.
-
-The general algorithm of normal and abnormal clusters classification in a simplified form is presented on Figure \ref{fig:cl-classif}.
-
-\begin{figure}[!htb]
-	\centering{}
-	\includegraphics[width=0.8\textwidth]{images/cl-classif.png}
-	\caption{Normal and anomalous clusters classification}
-	\label{fig:cl-classif}
-\end{figure}
-
-\subsection{Clusters' Modeling}
-
-In order to perform a further classification of an input trajectory in a more efficient way, in the related work it was proposed to create cluster models (CM), or path models, for normal clusters. Model of a cluster can be described as a compact representation of it. Models of normal clusters can be considered as patterns of frequent trajectories since they represent the whole cluster of trajectories with the highest accuracy. 
-
-Two main concepts of extracting a model from a cluster exist \cite{article:surv_cl_models}: 
-\begin{itemize}
-	\item taking a representative trajectory from the cluster. Such a trajectory is considered to be the center of a cluster. An easiest way to specify the representative trajectory is by defining only its centroid (cluster centroid, centroid path). As an extension a centroid can be augmented by a path envelope;
-	\item estimating a model from the trajectories associated with the cluster by the use of probabilistic models, such as the Gaussian observation emission HMMs. Such method requires the trajectories to be preprocessed and is better to apply on probabilistically modeled trajectories.
-\end{itemize}
-
-In comparison with the second case, taking a representative trajectory for each cluster as a model is more simple, moreover, it does not require the trajectories to have the same number of trajectory points \cite{inproceedings:7_related_work}.
-
-Authors in \cite{inproceedings:7_related_work} propose an easy to calculate way of modeling a cluster without any preprocessing of trajectories: a CM is a trajectory least of all distant from others and in view of this can be considered as a cluster center and representation. That means choosing a trajectory with a minimum average LCSS distance to other trajectories in this cluster (Formula \ref{eq:cm_traj}):
-
-\begin{equation} \label{eq:cm_traj}
-	CM(C) = \min\limits_{T \in C} \frac{1}{|C|} \sum_{T' \in C} D_{LCSS}(T, T')
-\end{equation}
-
-Figure \ref{fig:cm-modeling} depicts the main concept of choosing the CM: for each group of trajectories taking as a CM the most qualificative, characteristical trajectory.
-
-\begin{figure}[!htb]
-	\centering{}
-	\includegraphics[width=0.7\textwidth]{images/cm-modeling.png}
-	\caption{CM detection}
-	\label{fig:cm-modeling}
-\end{figure}
-
-Therefore, clusters' modeling is implemented in order to simplify and accelerate the classification step, which, as a result of using the proposed approach of choosing a representative trajectory for each cluster, reduces to calculating the distance between the input trajectory and each of the CMs.
-
 \section{Trajectories Analysis}
 
 It was mentioned before, that LCSS distance is used as a distance measure between trajectories to perform clustering. LCSS distance implies computing the Longest Common SubSequence between two input trajectories using two parameter values: $\delta$ and $\varepsilon$. 
@@ -151,9 +70,9 @@ While considering the visualization of trajectories on sample images taken from 
 	\label{algo:lcss-descr}
 	\SetAlgoLined
 	\KwIn{First trajectory: $T_1$,\newline
-			Second trajectory: $T_2$,\newline
-			Temporal remoteness threshold: $\delta$,\newline
-			Spatial remoteness threshold (default): $\varepsilon_x$, $\varepsilon_y$
+		Second trajectory: $T_2$,\newline
+		Temporal remoteness threshold: $\delta$,\newline
+		Spatial remoteness threshold (default): $\varepsilon_x$, $\varepsilon_y$
 	}
 	\KwOut{LCSS distance for two trajectories}
 	\Begin{
@@ -166,8 +85,8 @@ While considering the visualization of trajectories on sample images taken from 
 		\eIf {$T_1$ or $T_2$ is empty}{
 			return 0;	
 		}{\eIf {difference between X-coordinates < $\varepsilon_x$ \newline
-			AND difference between Y-coordinates < $\varepsilon_y$ \newline
-			AND difference between trajectory lengths < $\delta$}{
+				AND difference between Y-coordinates < $\varepsilon_y$ \newline
+				AND difference between trajectory lengths < $\delta$}{
 				- increase LCSS by 1\;
 				- call recursive for trajectories excluding last points\;
 			}{
@@ -217,45 +136,6 @@ The approach to make the parameters adaptive considered in this work is describe
 
 In order to optimize the calculation of a distance to camera point and avoid recalculation of it multiple times during the LCSS computation algorithm, this distance is being calculated in advance and stored for each trajectory point.
 
-\section{Measuring the Clusters Validity}
-
-Since the goal of the current work is finding an optimal adaptive parameter values for similarity measure computation, it is necessary to analyze and compare the results after performing clustering. 
-
-According to \cite{online:dunn_cl_valid} cluster validity measures can be classified as follows:
-
-\begin{itemize}
-	\item \textbf{Internal cluster validation} -- the result of performed clustering is being evaluated based on the input data clustered. It is based on an internal information and does not include references to external information.
-	\item \textbf{External cluster validation} -- evaluation of clustering results is performed in accordance with externally known results, e.g. given class labels. Such validation is not appropriate for unsupervised clustering then no input labels are provided.
-	\item \textbf{Relative cluster validation} -- evaluation of the clustering results is done by running the same algorithm using different input parameters, such as number of clusters, etc..
-\end{itemize}
-
-At the same time clustering is primarily an unsupervised data mining technique and the input data does not contain data labels. That leads to the necessity to test the resulting clusters in an unsupervised manner. 
-
-One of the most widely used and known measures for evaluating clustering algorithms is a Dunn's Validity Index (DI), which was introduced by J. C. Dunn in 1974 in \cite{article:dunn_orig}. It is an internal evaluation metric which is intended to identify compact clusters with a small variance between cluster members which are well-separated between each other, meaning clusters are sufficiently distant from surrounding clusters in comparison with inter-cluster variance \cite{online:hier_clust_r}. Dunn's index is calculated as the ratio between the minimum inter-cluster distance $d_{min}$ to the maximum intra-cluster diameter $d_{max}$ and for $k$ number of clusters can be defined as follows (Formula \ref{eq:dunn-index}) \cite{article:quant_eval_perf_clust}:
-
-\begin{equation} \label{eq:dunn-index}
-	DI = \frac {d_{min}} {d_{max}} = \frac{\min\limits_{\substack{1 \leq i \leq k \\ i+1 \leq j \leq k}} dist(c_i, c_j)} {\max\limits_{1 \leq l \leq k} diam(c_l)}
-\end{equation}
-
-where minimum inter-cluster distance $d_{min}$ in accordance with the single linkage method refers to the minimal distance between two trajectories from different clusters. Maximum intra-cluster diameter $d_{max}$, or the largest within-cluster distance in other words, supposes computing the diameter of a cluster as a distance between its two farthermost trajectories \cite{inproceedings:clust_ind}. 
-
-The sample description of a DI index for 3 clusters is given in Figure \ref{fig:di_sample}. According to this sample, Formula \ref{eq:dunn-index-sample} can be written out as follows:
-
-\begin{equation} \label{eq:dunn-index-sample}
-DI = \frac {d_{min}} {d_{max}} = \frac
-	{\min ({dist_{min}}^1, {dist_{min}}^2, {dist_{min}}^3)}
-	{\max ({diam_{max}}^1, {diam_{max}}^2, {diam_{max}}^3)}
-\end{equation}
-
-\begin{figure}[!htb]
-	\centering{}
-	\includegraphics[width=0.5\textwidth]{images/di-sample.png}
-	\caption{Explanation of DI}
-	\label{fig:di_sample}
-\end{figure}
-
-Higher values of the DI indicates the better results of clustering. Trajectories, located far from each other inside one cluster, must be distinguishable from trajectories relating to other clusters. Values of DI close to 1 mean that minimum distances to trajectories from different clusters remain bigger than distance to farthermost trajectories from the same cluster. However, the computational cost of the DI is highly dependent on the data: the computation cost increases with the increase of number of clusters and dimensionality of the data \cite{online:dunn_cl_valid}.
-
 \section{Trajectories Approximation}
 
 However, notwithstanding that the LCSS similarity distance works with trajectories of arbitrary lengths and does not natively require the preprocessing of trajectories, the calculation of LCSS measure becomes extremely computationally expensive and time consuming with the growth of the trajectory length because of the recursiveness. Moreover, most of the input trajectories contain far more trajectory points than needed for further analysis, these redundant information reduces the speed of processing \cite{article:multir_pol_appr}. For that reason it was decided to decrease the size of trajectories in the current work by approximation of trajectory data. This task is called trajectory simplification (TS). The goal of a TS task is to convert a given trajectory, represented by a set of trajectory points $T = {(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)}$, into a subset of points $T' = {(x_{i_1}, y_{i_1}), (x_{i_2}, y_{i_2}), \ldots, (x_{i_m}, y_{i_m})}$, where $1 = i_1 < \ldots < i_m = n$ \cite{article:multir_pol_appr}.
@@ -287,11 +167,11 @@ A regression can be linear or polynomial (nonlinear, curvilinear) depending on t
 The visualization of input trajectory data is given in Figure \ref{fig:tr_p}. As it can be seen from the picture, neither the linear or $2\up{nd}$ order functions can not fit the data properly due to complexity of trajectory forms. For that reason it was decided to focus on approximation using higher-order polynomial regression. The evaluation of polynomial regression with different degrees will be given further and the following discussion and implementation will be intended to find a suitable $n\up{th}$ order polynomial equation and parameter values to represent each input trajectory as a `trajectory function'. Since trajectory data is represented by two-dimensional spatial data along with temporal data and it is necessary to approximate spatial information, $x$- and $y$-coordinates will be considered as dependent variables and $time$ will be used as an independent variable. Consequently, polynomial regression will be performed twice with two output polynomial functions representing $x(t)$ and $y(t)$ for each of the input trajectories $T$:
 
 \begin{equation}\label{eq:regr-func}
-	\forall\ T = [\ldots (x_i, y_i, t_i) \ldots] = > T(t) = 
-		\begin{cases}
-			x = x(t) \\
-			y = y(t) \\
-		\end{cases}
+\forall\ T = [\ldots (x_i, y_i, t_i) \ldots] = > T(t) = 
+\begin{cases}
+x = x(t) \\
+y = y(t) \\
+\end{cases}
 \end{equation}
 
 Trajectories will be converted from a shape of a list of trajectory points into equations (time functions) defined in a geometrical space, which can represent approximately all of them. Taking key points of the representative polynomial can decrease the size of the trajectory therethrough reducing the total operational cost and computational complexity of LCSS calculation. Moreover, mathematical equations are able to store information in a dense form and apart from other advantages such a data reduction leads to consuming less amount of space and increasing the storage efficiency \cite{article:behav_form_extr}. Also so called built `trajectory functions's can provide interpolation and discover the missing data points.
@@ -303,7 +183,7 @@ Trajectories will be converted from a shape of a list of trajectory points into 
 In order to achieve better approximation the evaluation of polynomial regression results was performed using the Coefficient of Determination denoted by $R^2$ (also known as a $R$-$squared$ score, \textit{Pearson's coefficient of regression}) \cite{inbook:stats}. $R^2$ measures the proportion of the response dependent variable variance that can be explained by the regression model with given parameters and is predictable from the independent variable and can be calculated as follows: 
 
 \begin{equation}\label{eq:r_sq}
-	R^2 = 1 - \frac{SSE}{TSS} = 1 - \frac{\sum{(y_i - \hat{y_i})^2}}{\sum{(y_i - \overline{y})^2}}
+R^2 = 1 - \frac{SSE}{TSS} = 1 - \frac{\sum{(y_i - \hat{y_i})^2}}{\sum{(y_i - \overline{y})^2}}
 \end{equation}
 
 where $SSE$ (Sum of Squares due to Error) is calculated as a sum of squared differences between actual $y_i$, and predicted $\hat{y_i}$ dependent variable values and $TSS$ (Total Sum of Squares) is calculated as a sum of squared deviations of an actual value $y_i$ from a mean $\overline{y}$.
@@ -325,7 +205,7 @@ Figure \ref{fig:rdp_algo} depicts the process of a curve approximation using RDP
 \end{itemize} 
 
 \begin{wrapfigure}[20]{r}{0.4\textwidth}
-	\vspace{0pt}
+	\vspace{-30pt}
 	\centering{}
 	\includegraphics[width=\linewidth]{images/rdp-algo-2.png}
 	\caption{Curve smoothing using RDP algorithm \cite{online:rdp_algo_var}}
@@ -394,7 +274,7 @@ The description of the Douglas-Peucker N approach is given in Algorithm \ref{alg
 	\label{algo:rdp-n-descr}
 	\SetAlgoLined
 	\KwIn{	List of trajectory points: TrajectoryPoint[] trajectory,\newline
-			Maximum amount of points in simplified trajectory: count
+		Maximum amount of points in simplified trajectory: count
 	}
 	\KwOut{Sublist of trajectory points: TrajectoryPoint[] simplified}
 	\BeginRDP{trajectory, count}{
@@ -412,7 +292,6 @@ The description of the Douglas-Peucker N approach is given in Algorithm \ref{alg
 	
 \end{algorithm}
 
-
 \subsubsection{RDP Algorithm Evaluation using Positional Errors}
 
 In order to compare results, the effectiveness and accuracy of RDP algorithm with the results of the Polynomial Regression, the location difference between the original curve and the simplified line will be analyzed. This method is called positional errors calculation. Positional error is being computed for each input original point as the perpendicular difference between the original point and the respective simplified line segment (Figure \ref{fig:rdp_algo_eval}) \cite{online:rdp_algo_var}. Lower the positional errors -- better are simplification results.
@@ -423,3 +302,157 @@ In order to compare results, the effectiveness and accuracy of RDP algorithm wit
 	\caption{Positional Errors for RDP evaluation \cite{online:rdp_algo_var}}
 	\label{fig:rdp_algo_eval}
 \end{figure}
+
+\section{Clustering}
+
+\subsection{Agglomerative Hierarchical Clustering}
+
+Clustering is done using an unsupervised agglomerative hierarchical clustering approach. The description of this approach is given in Algorithm \ref{algo:ahc-descr} \cite{inproceedings:7_related_work}.
+
+\begin{algorithm}[!htb]
+	\caption{Description of Agglomerative Hierarchical Clustering}
+	\label{algo:ahc-descr}
+	\SetAlgoLined
+	\KwIn{A Database of Trajectories: trajectories}
+	\KwOut{Clusters of Trajectories: clusters}
+	\textit{Initialization:} \\
+	- initialize the clusters with one trajectory in each cluster \\
+	\textit{Clusters merging:}\\
+	\While{number of clusters is greater than 1}{
+		- calculate similarity matrix D between pairs of clusters based on single linkage approach using LCSS similarity measure;\\
+		- find the smallest distance between clusters in D;\\
+		- merge two clusters with the corresponding smallest distance into a single cluster;\\
+		- remove two merged clusters;\\
+	}
+	
+\end{algorithm}
+
+As it was already mentioned, agglomerative hierarchical clustering methods suppose clusters joining, which requires the inter-cluster distance measure to be defined. In \cite{inproceedings:7_related_work} authors have performed evaluation of different linkage methods, including single link, complete link and average link. Single link, average link and complete link linkage methods consider a minimum, average and maximum distance between two trajectories as an inter-cluster distance respectively and can be summed up as \cite{inproceedings:7_related_work}:
+
+\begin{equation} \label{eq:single_link}
+	D_{min}(C_i, C_j) = \min_{T_1 \in C_i, T_2 \in C_j} D_{LCSS}(T_1, T_2),
+\end{equation} 
+
+\begin{equation} \label{eq:average_link}
+	D_{avg}(C_i, C_j) = \ \ \ \ \ avg\ \ \ \ \ \ D_{LCSS}(T_1, T_2),
+\end{equation} 
+
+\begin{equation} \label{eq:complete_link}
+	D_{max}(C_i, C_j) = \max_{T_1 \in C_i, T_2 \in C_j} D_{LCSS}(T_1, T_2),
+\end{equation} 
+
+where ($C_i$, $C_j$) denotes two clusters and ($T_1$, $T_2$) corresponds to two trajectories from two clusters respectively.
+
+\subsection{Normal and Anomalous Clusters Classification}
+
+Hereinafter the concept of the cluster cardinality, denoted as $|C|$, is used.
+The cardinality of a cluster refers to a number of trajectories in that cluster.
+
+Since the main objective of the current work is detection of anomalies by the way of trajectories clustering, following clusters' modeling and finally an input trajectory classification, the concepts of a normal and anomalous cluster must be introduced. Normal cluster is a cluster containing a relatively large amount of trajectories in comparison with others, meaning that such a vehicular behavior, defined by the cluster, is normal and allowed on the current intersection. Consequently, the clusters classification technique needs to be defined.
+
+To perform clusters classification, the analysis of a selection, obtained by calculating the cardinalities of resulting clusters, will be conducted using the order statistical measure, specifically quantile. Quantiles are the way of dividing the whole initial ordered data set into a predefined amount of segments \cite{inbook:stats}. The $\alpha$-quantile is a numerical value, which represents the characteristic of the distribution law of a random variable, according to which all values from this distribution with a fixed probability $\alpha$ (or $\alpha$\up{th} part of all values) do not exceed the specified $\alpha$-quantile value. In statistical analysis, the most frequently used quantiles are: median (dividing the entire set into 2 segments at the 50th percentile), quartile (dividing into 4 segments by 25, 50, 75\%), quintile (5 segments), decile (10 segments), percentile (100 segments). In the current work, it was decided to use the 0.25-quantile (lower, first quartile) as the threshold value.
+
+The general algorithm of normal and abnormal clusters classification in a simplified form is presented on Figure \ref{fig:cl-classif}.
+
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.8\textwidth]{images/cl-classif.png}
+	\caption{Normal and anomalous clusters classification}
+	\label{fig:cl-classif}
+\end{figure}
+
+\subsection{Measuring the Clusters Validity}
+
+Since the goal of the current work is finding an optimal adaptive parameter values for similarity measure computation, it is necessary to analyze and compare the results after performing clustering. 
+
+According to \cite{online:dunn_cl_valid} cluster validity measures can be classified as follows:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item \textbf{Internal cluster validation} -- the result of performed clustering is being evaluated based on the input data clustered. It is based on an internal information and does not include references to external information.
+	\item \textbf{External cluster validation} -- evaluation of clustering results is performed in accordance with externally known results, e.g. given class labels. Such validation is not appropriate for unsupervised clustering then no input labels are provided.
+	\item \textbf{Relative cluster validation} -- evaluation of the clustering results is done by running the same algorithm using different input parameters, such as number of clusters, etc..
+\end{itemize}
+
+At the same time clustering is primarily an unsupervised data mining technique and the input data does not contain data labels. That leads to the necessity to test the resulting clusters in an unsupervised manner. 
+
+One of the most widely used and known measures for evaluating clustering algorithms is a Dunn's Validity Index (DI), which was introduced by J. C. Dunn in 1974 in \cite{article:dunn_orig}. It is an internal evaluation metric which is intended to identify compact clusters with a small variance between cluster members which are well-separated between each other, meaning clusters are sufficiently distant from surrounding clusters in comparison with inter-cluster variance \cite{online:hier_clust_r}. Dunn's index is calculated as the ratio between the minimum inter-cluster distance $d_{min}$ to the maximum intra-cluster diameter $d_{max}$ and for $k$ number of clusters can be defined as follows (Formula \ref{eq:dunn-index}) \cite{article:quant_eval_perf_clust}:
+
+\begin{equation} \label{eq:dunn-index}
+DI = \frac {d_{min}} {d_{max}} = \frac{\min\limits_{\substack{1 \leq i \leq k \\ i+1 \leq j \leq k}} dist(c_i, c_j)} {\max\limits_{1 \leq l \leq k} diam(c_l)}
+\end{equation}
+
+where minimum inter-cluster distance $d_{min}$ in accordance with the single linkage method refers to the minimal distance between two trajectories from different clusters. Maximum intra-cluster diameter $d_{max}$, or the largest within-cluster distance in other words, supposes computing the diameter of a cluster as a distance between its two farthermost trajectories \cite{inproceedings:clust_ind}. 
+
+The sample description of a DI index for 3 clusters is given in Figure \ref{fig:di_sample}. According to this sample, Formula \ref{eq:dunn-index-sample} can be written out as follows:
+
+\begin{equation} \label{eq:dunn-index-sample}
+DI = \frac {d_{min}} {d_{max}} = \frac
+{\min ({dist_{min}}^1, {dist_{min}}^2, {dist_{min}}^3)}
+{\max ({diam_{max}}^1, {diam_{max}}^2, {diam_{max}}^3)}
+\end{equation}
+
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.5\textwidth]{images/di-sample.png}
+	\caption{Explanation of DI}
+	\label{fig:di_sample}
+\end{figure}
+
+Higher values of the DI indicates the better results of clustering. Trajectories, located far from each other inside one cluster, must be distinguishable from trajectories relating to other clusters. Values of DI close to 1 mean that minimum distances to trajectories from different clusters remain bigger than distance to farthermost trajectories from the same cluster. However, the computational cost of the DI is highly dependent on the data: the computation cost increases with the increase of number of clusters and dimensionality of the data \cite{online:dunn_cl_valid}.
+
+\subsection{Clusters' Modeling}
+
+In order to perform a further classification of an input trajectory in a more efficient way, in the related work it was proposed to create cluster models (CM), or path models, for normal clusters. Model of a cluster can be described as a compact representation of it. Models of normal clusters can be considered as patterns of frequent trajectories since they represent the whole cluster of trajectories with the highest accuracy. 
+
+Two main concepts of extracting a model from a cluster exist \cite{article:surv_cl_models}:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item taking a representative trajectory from the cluster. Such a trajectory is considered to be the center of a cluster. An easiest way to specify the representative trajectory is by defining only its centroid (cluster centroid, centroid path). As an extension a centroid can be augmented by a path envelope;
+	\item estimating a model from the trajectories associated with the cluster by the use of probabilistic models, such as the Gaussian observation emission HMMs. Such method requires the trajectories to be preprocessed and is better to apply on probabilistically modeled trajectories.
+\end{itemize}
+
+In comparison with the second case, taking a representative trajectory for each cluster as a model is more simple, moreover, it does not require the trajectories to have the same number of trajectory points \cite{inproceedings:7_related_work}.
+
+Authors in \cite{inproceedings:7_related_work} propose an easy to calculate way of modeling a cluster without any preprocessing of trajectories: a CM is a trajectory least of all distant from others and in view of this can be considered as a cluster center and representation. That means choosing a trajectory with a minimum average LCSS distance to other trajectories in this cluster (Formula \ref{eq:cm_traj}):
+
+\begin{equation} \label{eq:cm_traj}
+	CM(C) = \min\limits_{T \in C} \frac{1}{|C|} \sum_{T' \in C} D_{LCSS}(T, T')
+\end{equation}
+
+Figure \ref{fig:cm-modeling} depicts the main concept of choosing the CM: for each group of trajectories taking as a CM the most qualificative, characteristical trajectory.
+
+\begin{figure}[!htb]
+	\centering{}
+	\includegraphics[width=0.7\textwidth]{images/cm-modeling.png}
+	\caption{CM detection}
+	\label{fig:cm-modeling}
+\end{figure}
+
+Therefore, clusters' modeling is implemented in order to simplify and accelerate the classification step, which, as a result of using the proposed approach of choosing a representative trajectory for each cluster, reduces to calculating the distance between the input trajectory and each of the CMs.
+
+\section{Trajectories Classification}
+
+The last step of the proposed approach is the input trajectories classification and consequently anomalies detection. Since the clusters' modeling is used, an input trajectory classification is simplified to the process consisting of following steps:
+
+\begin{enumerate}
+	\setlength\itemsep{0em}	
+	\item Approximate an input trajectory;
+	\item Calculate LCSS distance to each cluster (to its \textit{CM});
+	\item Select the closest cluster (normal or anomalous). If the input trajectory does not comply with any of the known clusters, it will be considered as an anomalous.
+\end{enumerate}
+
+\subsection{Anomalies Detection}
+
+Consequently, the anomalies detection reduces itself to necessity to classify the trajectories. Anomalies can be detected as:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item trajectories related to anomalous clusters;
+	\item trajectories which are not associated with any of the known clusters.
+\end{itemize}
+
+
+
+

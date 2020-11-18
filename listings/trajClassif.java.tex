@@ -1,0 +1,39 @@
+    /**
+     * Trajectories classification
+     * Based on using defined clusters' models
+     * - compares input trajectory with each cluster by calculating the LCSS distance to the cluster model
+     * - finds the closest cluster taking into consideration threshold value *defining the maximum allowed distance)
+     * - - no cluster was found -> trajectory is anomalous (unknown behavior)
+     * - - cluster is found -> depends on the label of the cluster
+     *
+     * @param inputTrajectories A list of input trajectories to be classified
+     *
+     * Classifies each input trajectory and print the classification result
+     */
+    public void classifyTrajectories(List<Trajectory> inputTrajectories) throws IOException {
+        double lcssMax = 0.85;
+        List<Trajectory> anomalousTrajectories = new ArrayList<>();
+        inputTrajectories.forEach(it -> {
+            final double[] minLcss = {1.0};
+            final Cluster[] closestCluster = {null};
+            calcEuclDistancesToCP(inputTrajectories);
+
+            System.out.println(String.format("------tr \%s-----", it.getId()));
+            clusters.forEach(cl -> {
+                double curLcss = calcLCSSDist(it, cl.getClusterModel());
+                if (curLcss < minLcss[0]) {
+                    minLcss[0] = curLcss;
+                    closestCluster[0] = cl;
+                }
+                System.out.println(String.format("dist to cl \%s = \%.2f", cl.getId(), curLcss));
+            });
+            if (closestCluster[0] == null || minLcss[0] > lcssMax) {
+                System.out.println("anomalous trajectory");
+                anomalousTrajectories.add(it);
+            } else {
+                System.out.println(String.format("closest cl is \%s", closestCluster[0].getId()));
+                System.out.println(closestCluster[0].getNormal() ? "normal trajectory" : "anomalous trajectory");
+            }
+        });
+        new DisplayImage().displayAndSave(getImgFileName("1"), null, null, anomalousTrajectories, false);
+    }

@@ -1,5 +1,5 @@
-\chapter{Evaluation \& Results}
-\label{ch:Evaluation and Results}
+\chapter{Results \& Evaluation}
+\label{ch:Results and Evaluation}
 
 This chapter describes the evaluation tests performed on the proposed approach on the basis of developed framework. Following sections are intended to give information about input data preparation, present and discuss obtained results. To start with, the trajectories approximation using polynomial regression is considered. After that the accuracy of clustering step is tested using an aforementioned DI index. As a conclusion, output results of a classification step are discussed, validation of the anomalies detection quality is done.
 
@@ -210,11 +210,11 @@ Comparison of total length of approximated trajectories and the positional error
 	\end{tabular}
 \end{table}
 
-However, notwithstanding that traditional RDP algorithm chooses adequate, representative points, it does not guarantee the exact amount of resulting points. Moreover, for trajectories of vehicles moving in a straightforward direction, meaning all original trajectory points are on a straight line, RDP algorithm will keep only first and last points. Such a behavior describes the trajectory form accurately, but do not appropriate to use for clustering. That leads to the necessity to perform a completion of approximation points by calculating additional key points.
+However, notwithstanding that traditional RDP algorithm chooses adequate, representative points, it does not guarantee the exact amount of resulting points. Moreover, for trajectories of vehicles moving in a straightforward direction, meaning all original \textit{TPs} are on a straight line, RDP algorithm will keep only first and last points. Such a behavior describes the trajectory form accurately, but do not appropriate to use for clustering. That leads to the necessity to perform a completion of approximation points by calculating additional key points.
 
 \subsubsection{Douglas-Peucker N Algorithm}
 
-the same comparison is performed for the Douglas-Peucker N Algorithm for different values of $N$, results are given in Table \ref{table:rdp_n_length_pos_err}. The minimum length is equal to 2, meaning that trajectory points are located on a straight line, and the trajectory coincides with the initial simplifying line, consisting of the first and last trajectory points (Figure \ref{fig:rdp_2_points_only}). Notwithstanding that, the average length is almost equal to the desired $N$ value. Moreover, as expected, increase of $N$ value leads to the decrease of the positional error. Trajectories approximated by only first and last points will be complemented by calculating middle points to fulfill the desired maximum amount of trajectory points in a simplified trajectory (Figure \ref{fig:rdp_2_points_filled}). Some of the points are redundant, but improve the clustering results.
+The same comparison is performed for the Douglas-Peucker N Algorithm for different values of $N$, results are given in Table \ref{table:rdp_n_length_pos_err}. The minimum length is equal to 2, meaning that \textit{TPs} are located on a straight line, and the trajectory coincides with the initial simplifying line, consisting of the first and last trajectory points (Figure \ref{fig:rdp_2_points_only}). Notwithstanding that, the average length is almost equal to the desired $N$ value. Moreover, as expected, increase of $N$ value leads to the decrease of the positional error. Trajectories approximated by only first and last points will be complemented by calculating middle points to fulfill the desired maximum amount of \textit{TPs} in a simplified trajectory (Figure \ref{fig:rdp_2_points_filled}). Some of the points are redundant, but improve the clustering results.
 
 \begin{figure}[!htb]
 	\centering
@@ -228,10 +228,10 @@ the same comparison is performed for the Douglas-Peucker N Algorithm for differe
 	\begin{subfigure}[!htb]{0.9\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/rdp-2-points-filled.png}
-		\caption{$3.txt$}
+		\caption{complemented by middle points}
 		\label{fig:rdp_2_points_filled}
 	\end{subfigure}
-	\caption{complemented by middle points}
+	\caption{Douglas-Peucker N $3.txt$}
 	\label{fig:rdp_2_points}
 \end{figure}
 
@@ -326,7 +326,7 @@ As it can be seen, Douglas-Peucker N algorithm leads to much more accurate resul
 
 \subsection{Trajectories Clustering Results}
 
-To compare the clustering results, several experiments were carried out on different input data ($1.txt$, $2.txt$), using static and adaptive values of the $\varepsilon$ parameter, with a different number of final clusters (7, 8, 9). The obtained clusters were validated in two ways: visual test and DI value. The results of the experiments and their discussion will be presented below.
+To compare the clustering results, several experiments were carried out on different input data ($1.txt$, $2.txt$), using static and adaptive values of the $\varepsilon$ parameter, with a different number of final clusters (7, 8, 9). The obtained clusters were validated in two ways: visual test and DI value. The results of experiments and discussion will be presented below.
 
 To evaluate the efficiency of using the adaptive values of the $\varepsilon$ parameter, and compare them with the results when using static values, clustering was performed on the data from the first intersection ($1.txt$) for 7, 8 and 9 resulting clusters at different values of the coefficient participating in the formulas for calculating $\varepsilon$ (\ref{eq:delta-adapt}-\ref{eq:epsY-adapt}):
 
@@ -461,47 +461,292 @@ The comparison of static $\varepsilon$ values was carried out with the coefficie
 
 According to the table, static $\varepsilon$ gives the best results for the amount of 9 resulting clusters. The best options, which were selected, are highlighted in bold.
 
-Data from the second intersection ($2.txt$) was used to carry out 3 experiments with a different number of final clusters: 7, 8 and 9. According to the experimental results, merging up to 8 clusters demonstrated more accurate data partitioning and higher DI values. The results of clustering on the example of data from the first intersection are shown in Figure \ref{fig:clust-res}, data clusters are displayed with different colors. On Figure \ref{fig:9cl-di-94} it is apparent that it is possible and advisable to further merge the clusters represented by yellow and green. Figure \ref{fig:8cl-di-95} depicts the result of further clustering (in this case, combining clusters), in which the two specified clusters were combined into one based on the small value of the distance between them (high degree of similarity). Figure \ref{fig:7cl-di-97} shows the result of subsequent merging of two clusters up to the final 7. It can be seen that a green cluster was merged into the red cluster, while visually that does not correspond to the actual similarity of the clusters: according to the visual test, the yellow and light pink clusters are the closest to be merged. Despite the fact that value of the DI index turned out to be higher, the visual test indicates that the obtained clusters are unsatisfactory. Thus, the most logical clustering option is clustering up to 8 clusters.
+Data from the second intersection ($2.txt$) was used to carry out 3 experiments with a different number of final clusters: 7, 8 and 9. According to the experimental results, merging up to 8 clusters demonstrated more accurate data partitioning and higher DI values. The results of clustering on the example of data from the first and second intersections are shown in Figures \ref{fig:clust-res-1} -- \ref{fig:clust-res-2}, data clusters are displayed with different colors. On Figure \ref{fig:9cl-di-94} it is apparent that it is possible and advisable to further merge the clusters represented by yellow and green. Figure \ref{fig:8cl-di-95} depicts the result of further clustering (in this case, combining clusters), in which the two specified clusters were combined into one based on the small value of the distance between them (high degree of similarity). Figure \ref{fig:7cl-di-97} shows the result of subsequent merging of two clusters up to the final 7. It can be seen that a green cluster was merged into the red cluster, while visually that does not correspond to the actual similarity of the clusters: according to the visual test, the yellow and light pink clusters are the closest to be merged. Despite the fact that value of the DI index turned out to be higher, the visual test indicates that the obtained clusters are unsatisfactory. Thus, the most logical clustering option is clustering up to 8 clusters.
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}[!htb]{0.8\textwidth}
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/9cl-di-1.jpeg}
+		\caption{9 resulting clusters, DI = 0.94}
+		\label{fig:9cl-di-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/8cl-di-1.jpeg}
+		\caption{8 resulting clusters, DI = 0.95}
+		\label{fig:8cl-di-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/7cl-di-1.jpeg}
+		\caption{7 resulting clusters, DI = 0.97}
+		\label{fig:7cl-di-1}
+	\end{subfigure}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$, $coeff_\varepsilon = 20.0$ ($1.txt$), Polynomial Regression approximation}
+	\label{fig:clust-res-1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.495\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/9cl-di-94.png}
 		\caption{9 resulting clusters, DI = 0.94}
 		\label{fig:9cl-di-94}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}[!htb]{0.8\textwidth}
+	\begin{subfigure}[!htb]{0.495\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/8cl-di-95.png}
 		\caption{8 resulting clusters, DI = 0.95}
 		\label{fig:8cl-di-95}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}[!htb]{0.8\textwidth}
+	\begin{subfigure}[!htb]{0.495\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/7cl-di-97.png}
 		\caption{7 resulting clusters, DI = 0.97}
 		\label{fig:7cl-di-97}
 	\end{subfigure}
-	\caption{Clustering results for adaptive $\bm{\varepsilon}$, $coeff_\varepsilon = 20.0$ ($2.txt$)}
-	\label{fig:clust-res}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$, $coeff_\varepsilon = 20.0$ ($2.txt$), Polynomial Regression approximation}
+	\label{fig:clust-res-2}
 \end{figure}
 
 Validation of the resulting clusters was carried out using the DI metric, the following values ​​were obtained:
 
 \begin{itemize}
 	\setlength\itemsep{0em}
-	\item 9 clusters -- DI = 0.94,
-	\item \textbf{8 clusters -- DI = 0.95},
-	\item 7 clusters -- DI = 0.97 (visually invalid clusters).
+	\item 9 clusters --> DI = 0.94,
+	\item \textbf{8 clusters --> DI = 0.95},
+	\item 7 clusters --> DI = 0.97 (visually invalid clusters).
 \end{itemize}
 
 However, despite the high DI value, it can be noticed that the clustering result contains errors: blue key points corresponding to the blue cluster of trajectories are superimposed on the trajectories of the red cluster. A possible reason for such a behavior is a high degree of similarity between these trajectories and trajectories from the blue cluster in the upper left half of the figure: this area is represented by a dense accumulation of blue dots.
 
+\subsubsection{Approximation Methods Comparison}
+
+Clustering was performed and evaluated using filtered trajectories approximated by both Polynomial Regression and Douglas-Peucker N algorithms. Results of clustering using an adaptive $\varepsilon$ with the $adapt\_coeff = 20.0$ are presented on Figure \ref{fig:clust-res-1-rdp-n}.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/10cl-rdp-n-1.png}
+		\caption{10 resulting clusters, DI = 0.97}
+		\label{fig:10cl-rdp-n-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/9cl-rdp-n-1.png}
+		\caption{9 resulting clusters, DI = 0.97}
+		\label{fig:9cl-rdp-n-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/8cl-rdp-n-1.png}
+		\caption{8 resulting clusters, DI = 0.98}
+		\label{fig:8cl-rdp-n-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/7cl-rdp-n-1.png}
+		\caption{7 resulting clusters, DI = 0.99}
+		\label{fig:7cl-rdp-n-1}
+	\end{subfigure}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$, $coeff_\varepsilon = 20.0$ ($1.txt$), Douglas-Peucker N approximation, $N = 8$}
+	\label{fig:clust-res-1-rdp-n}
+\end{figure}
+
+As it can be seen from the comparison of Figures \ref{fig:clust-res-1} and \ref{fig:clust-res-1-rdp-n}, clustering the trajectories after Douglas-Peucker N approximation gives more precise results. While considering the images with 9 resulting clusters, in the second case algorithm specified a distinct cluster for the trajectories on the upper part of image related to vehicles with turning trajectories, while in the first case these trajectories were incorrectly included into a red cluster.
+
+\subsubsection{Linkage Methods Comparison}
+
+Different types of linkage methods, which are used in clustering to calculate between-clusters distance, were described in details in previous chapters. According to the tests performed by authors in \cite{inproceedings:7_related_work}, the single linkage method showed the best results and, in view of this, was chosen as a linkage method in the current work. However, evaluations were performed using all three linkage methods in application to used data, and comparison  revealed that average or complete linkage methods demonstrate much more accurate results than single linkage method (Figures \ref{fig:link-meth-comp-stat} -- \ref{fig:link-meth-comp-adapt}). Clustering with single linkage method ends up with almost all trajectories merged into one enormous cluster.
+
+In this section all the results were obtained using trajectories, approximated by Polynomial regression method.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/link_meth_comp_stat_min.png}
+		\caption{single linkage method, DI = 0.14}
+		\label{fig:link-meth-comp-stat-min}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/link_meth_comp_stat_avg.png}
+		\caption{average linkage method, DI = 0.63}
+		\label{fig:link-meth-comp-stat-avg}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/link_meth_comp_stat_max.png}
+		\caption{complete linkage method, DI = ~1.0}
+		\label{fig:link-meth-comp-stat-max}
+	\end{subfigure}
+	\caption{Comparison of clusters for different linkage methods, static $\varepsilon = 0.15$ ($1.txt$)}
+	\label{fig:link-meth-comp-stat}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/link_meth_comp_adapt_min.png}
+		\caption{single linkage method, DI = 0.57}
+		\label{fig:link-meth-comp-adapt-min}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/link_meth_comp_adapt_avg.png}
+		\caption{average linkage method, DI = 0.97}
+		\label{fig:link-meth-comp-adapt-avg}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/link_meth_comp_adapt_max.png}
+		\caption{complete linkage method, DI = ~1.0}
+		\label{fig:link-meth-comp-adapt-max}
+	\end{subfigure}
+	\caption{Comparison of clusters for different linkage methods, static $\varepsilon = 0.15$ ($1.txt$)}
+	\label{fig:link-meth-comp-adapt}
+\end{figure}
+
 \subsubsection{Summary}
 
-From the above it follows that, based on the results of both the quantitative assessment of the DI metric and the visual test, resulting clusters are more accurate when clustering till distributing data across 8 clusters for data from both intersections. In other words, 7 clusters are not enough to describe the vehicle trajectory patterns at these intersections. However, when using the static $\varepsilon$ parameter, clustering is more accurate for 9 clusters for data from both intersections.
+From the above it follows that based on the results of both the quantitative assessment of the DI metric and the visual test resulting clusters are more accurate when clustering till distributing data across 8 clusters for data from both intersections. In other words, 7 clusters are not enough to describe the vehicle trajectory patterns at these intersections. However, when using the static $\varepsilon$ parameter, clustering is more accurate for 9 clusters for data from both intersections.
 
-Moreover, according to the results, the use of adaptive values ​for the$\varepsilon$ parameter improved the clustering results significantly.
+Moreover, according to the results, the use of adaptive values for the $\varepsilon$ parameter improved the clustering results significantly.
+
+\subsection{Clusters Classification Results}
+
+As it was described in the previous chapter, clusters with small cardinalities are considered as clusters of anomalous trajectories. Figures \ref{fig:cl-classif-res-1} -- \ref{fig:cl-classif-res-2} depict normal and anomalous clusters for data from first and second intersections respectfully.
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-classif-norm-1.jpeg}
+		\caption{all clusters}
+		\label{fig:cl-classif-norm-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-classif-anom-1.jpeg}
+		\caption{anomalous clusters}
+		\label{fig:cl-classif-anom-1}
+	\end{subfigure}
+	\caption{Normal and anomalous clusters classification results ($1.txt$)}
+	\label{fig:cl-classif-res-1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-classif-norm-2.jpeg}
+		\caption{all clusters}
+		\label{fig:cl-classif-norm-2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-classif-anom-2.jpeg}
+		\caption{anomalous clusters}
+		\label{fig:cl-classif-anom-2}
+	\end{subfigure}
+	\caption{Normal and anomalous clusters classification results ($2.txt$)}
+	\label{fig:cl-classif-res-2}
+\end{figure}
+
+\subsection{Trajectories Classification Results}
+
+\section{Evaluation of Performance}
+
+This section gives details on performance evaluation and provides comparative information about time for approximation, distance calculation and clustering steps for different analyzed methods.
+
+\subsection{Trajectories Approximation}
+
+In following paragraphs the approximation techniques will be tested using 438 preliminary filtered trajectories from the first intersection ($1.txt$) with an average length of 29 \textit{TPs}.
+
+\subsubsection{Polynomial Regression}
+
+Approximation using Polynomial Regression method works fast consuming only 256 milliseconds for the whole set of input trajectories, with an average consumption of ~0,6 milliseconds per trajectory. The mentioned time includes the time needed to calculate key points, the process of finding a polynomial function itself takes 73 milliseconds. The average length of approximated trajectories equals to 7,4 \textit{TPs}.
+
+\subsubsection{RDP Algorithm}
+
+Approximation using an RDP algorithm takes 55 milliseconds including calculation of additional middle points. The approximation results in trajectories with lengths within 7 and 12 \textit{TPs}, with an average of 7,96 points.
+
+\subsubsection{Douglas-Peucker N Algorithm}
+
+Approximation using a Douglas-Peucker N algorithm for $N = 8$ takes 223 milliseconds, which is less than a Polynomial Regression but longer than a traditional RDP algorithm. Approximated trajectories lengths' lie within 7 and 8 \textit{TPs}, with an average value of 7,98 \textit{TPs} before and within 5 and 8 with an average of 7,87 \textit{TPs} after excluding the redundant points.
+
+\subsubsection{Summary}
+
+Taking into consideration such criterias as average and maximum approximated trajectories lengths, quality and representativity of an approximated trajectory and time consumption while comparing aforementioned approximation methods, it can be concluded that Douglas-Peucker N should be chosen as an approximation method in this case. However, Douglas-Peucker N algorithm can not detect and reflect time-dependent behavior of a trajectory whereas Polynomial Regression approximates a trajectory with a polynomial function describing a dependency between time and spatial coordinates. 
+
+\subsection{LCSS Distances Calculation}
+
+Following Table \ref{table:lcss_dist_time} presents the time needed to perform LCSS distances calculation for filtered trajectories approximated by Polynomial regression and Douglas-Peucker N algorithms.
+
+\begin{table}[!htb]
+	\caption{Evaluation of LCSS distances calculation}
+	\label{table:lcss_dist_time}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\setcellgapes{3pt}\makegapedcells
+	
+	\begin{tabular}{||c|c|c|c||}
+		\hline
+		\makecell{approximation\\method} & \makecell{time (sec),\\total} & \makecell{avg time (sec),\\per pair} & comment \\[0.5ex]
+		\hline
+		\multicolumn{4}{||c||}{$1.txt$} \\[0.5ex]
+		\hline
+		Polynomial Regression 	& xxx 	& xxx	& xxx \\[0.5ex]
+		\hline
+		RDP 	& xxx 	& xxx	& xxx \\[0.5ex]
+		\hline
+		\makecell{Douglas-Peucker N,\\$N = 8$} 	& \makecell{2110364 sec\\(35,2 min)} 	& 22,05 sec & \makecell{$adapt\_coeff = 20.0$,\\average trajectory length\\7,87 TPs,\\438 trajectories,\\95703 trajectory pairs,\\average linkage method} \\[0.5ex]
+		\hline
+	\end{tabular}
+\end{table}
+
+\subsection{Trajectories Clustering and Classification}
+
+In Table \ref{table:clust_time} the time needed to perform clustering of filtered and approximated trajectories is given. Approximation was performed using Polynomial Regression and Douglas-Peucker N techniques.
+
+\begin{table}[!htb]
+	\caption{Evaluation of trajectories clustering}
+	\label{table:clust_time}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	\setcellgapes{3pt}\makegapedcells
+	
+	\begin{tabular}{||c|c|c|c||}
+		\hline
+		\makecell{approximation\\method} & \makecell{time (min),\\total} & \makecell{avg time (sec),\\per pair} & comment \\[0.5ex]
+		\hline
+		\multicolumn{4}{||c||}{$1.txt$} \\[0.5ex]
+		\hline
+		Polynomial Regression 	& xxx 	& xxx	& xxx \\[0.5ex]
+		\hline
+		Douglas-Peucker N, $N = 8$ 	& xxx 	& xxx	& xxx \\[0.5ex]
+		
+		
+		\hline
+	\end{tabular}
+\end{table}
+

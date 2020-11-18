@@ -113,23 +113,11 @@ where $distance_{total}$ refers to the total distance between the first and last
 
 \subsection{Input Data Filtering}
 
-Input data contains trajectories of different length and covered distance. However, due to accuracy and tracking errors in tracking system, some trajectories are senseless and look deficient. One of the possible reasons of that is losing the tracking object by a tracker. In contrast with the case of lost location, then the missed location can be found using approximation and regression models, the lost tracking object can not be fixed afterwards. for that reason, in order to improve the quality of results, it was decided to filter the input trajectories and ignore short trajectories with small covered distance, where the covered distance is calculated as an Euclidean distance between first and last trajectory points. For filtering parameters following values were used: $minLength = 10\ (trajectory\ points)$, $minTotalDist = 80\ (pixels)$. Filtering results with depicting the removed and kept trajectories are showed in Figure \ref{fig:traj_filter}.
+Input data contains trajectories of different length and covered distance. However, due to accuracy and tracking errors in tracking system, some trajectories are senseless and look deficient. One of the possible reasons of that is losing the tracking object by a tracker. In contrast with the case of lost location, then the missed location can be found using approximation and regression models, the lost tracking object can not be fixed afterwards. for that reason, in order to improve the quality of results, it was decided to filter the input trajectories and ignore short trajectories with small covered distance, where the covered distance is calculated as an Euclidean distance between first and last trajectory points. For filtering parameters following values were used: $minLength = 10\ (trajectory\ points)$, $minTotalDist = 80\ (pixels)$. Filtering results with depicting the removed (red) and kept (black) trajectories are shown in Figure \ref{fig:traj_filter}.
 
 \begin{figure}[!htb]
-	\centering
-	\begin{subfigure}[!htb]{0.48\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/traj-filter-out.png}
-		\caption{ignored}
-		\label{fig:traj_filter_out}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.48\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/traj-filter-keep.png}
-		\caption{$3.txt$}
-		\label{fig:traj_filter_keep}
-	\end{subfigure}
+	\centering{}
+	\includegraphics[width=0.8\textwidth]{images/traj-filter-res.jpeg}
 	\caption{Results of trajectories filtering for $1.txt$}
 	\label{fig:traj_filter}
 \end{figure}
@@ -276,11 +264,11 @@ The results of performed polynomial regression approximation and key points calc
 	\label{fig:regr-kp}
 \end{figure}
 
-\subsection{Trajectories Approximation using RDP Algorithm}
+\subsection{Trajectories Approximation using Douglas-Peucker N Algorithm}
 
 In comparison with the Polynomial Regression method, the accuracy of the RDP algorithm can be managed by changing the maximum distance $\varepsilon$ for the traditional RDP and by changing the $N$ value for the Douglas-Peucker N. 
 
-Simplified trajectories obtained by applying the Douglas-Peucker N algorithm are presented in Figure \ref{fig:rdp-n-res} for the parameter value $N = 9$ desired amount of simplification points.
+Simplified trajectories obtained by applying the Douglas-Peucker N algorithm are presented in Figure \ref{fig:rdp-n-res} for the parameter value $N = 9$, representing the desired amount of simplification points.
 
 \begin{figure}[!htb]
 	\begin{subfigure}[!htb]{0.32\textwidth}
@@ -357,11 +345,13 @@ As it can be seen from the presented code listing, the DI calculation consists o
 
 \subsection{Clusters' Modeling}
 
-To implement cluster modeling, the $Cluster$ entity class was augmented by the $clusterModel$ attribute of the $Trajectory$ type which stores a representative trajectory for the current cluster. Listing \ref{lst:cm-calc} presents an implementation of the cluster model calculation. For each cluster, the trajectory with the smallest average LCSS distance to all other trajectories in the current cluster is being specified. This trajectory is chosen as a cluster model. In the case of clusters consisting of a single trajectory, this trajectory is considered to be a cluster model.
+To implement cluster modeling, the $Cluster$ entity class was augmented by the $clusterModel$ attribute of the $Trajectory$ type which stores a representative trajectory for the current cluster. Listing \ref{lst:cm-calc} presents an implementation of the \textit{CM} calculation. For each cluster, the trajectory with the smallest average LCSS distance to all other trajectories in the current cluster is being specified. This trajectory is chosen as a \textit{CM}. In the case of clusters consisting of a single trajectory, this trajectory is considered to be a \textit{CM}.
+
+Since cluster's model defines the most representative trajectory for the cluster, it simplifies the classification process, because it is not needed to calculate the distances from an input trajectory to all the trajectories from each cluster one by one. The \textit{CM} acts like a cluster.
 
 \lstinputlisting[caption={Clusters' modeling}, label={lst:cm-calc}] {listings/cmCalc.java}
 
-The most representative cluster modeling results are shown in Figure \ref{fig:cm-res}. All trajectories belonging to the cluster are depicted using red dots, cluster models are highlighted in blue.
+The most representative cluster modeling results are shown in Figure \ref{fig:cm-res}. All trajectories belonging to the cluster are depicted using red dots, \textit{CMs} are highlighted in blue.
 
 \begin{figure}[!htb]
 	\centering
@@ -391,4 +381,107 @@ The most representative cluster modeling results are shown in Figure \ref{fig:cm
 	
 	\caption{Results of clusters' modeling ($2.txt$)}
 	\label{fig:cm-res}
+\end{figure}
+
+\subsection{Trajectories Classification and Anomalies Detection}
+
+To perform anomalies detection, trajectories classification is used, which is based on analyzing \textit{CMs} and finding the closest one or defining the input trajectory as anomalous. Method calculates distances from the input trajectory to each of the existing \textit{CMs}. A threshold $lcssMax$ is used to define the minimum required similarity between trajectory and a cluster to be considered belonging. It is required to identify the anomalous trajectories, significantly different from known \textit{CMs}. The whole method of a trajectory classification is given in Listing \ref{lst:traj-classif}:
+
+\lstinputlisting[caption={Trajectories classification}, label={lst:traj-classif}]{listings/trajClassif.java}
+
+Classification algorithm prints out the classification results with specifying the closest clusters with the calculated similarity value.
+
+Figures \ref{fig:classif-norm-res-1} -- \ref{fig:classif-norm-res-2} present the classification results using normal trajectories. Red trajectories denote the closest cluster; blue trajectory, depicted using bold \textit{TPs}, emphasizes the corresponding \textit{CM}; the input trajectory plotted using cyan color.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.40\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-1.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.57\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-2.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-3.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-4.jpeg}
+		\caption{}
+	\end{subfigure}
+	
+	\caption{Results of normal trajectories classification ($1.txt$)}
+	\label{fig:classif-norm-res-1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.97\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-1.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.97\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-2.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-3.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-4.jpeg}
+		\caption{}
+	\end{subfigure}
+	
+	\caption{Results of normal trajectories classification ($2.txt$)}
+	\label{fig:classif-norm-res-2}
+\end{figure}
+
+Results of anomalous trajectories clustering are given along with the calculated 
+similarity, denoting the belonging of trajectory to the cluster (Figure \ref{fig:classif-anom-res-2}).
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.70\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-1.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.28\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-1-stat.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.70\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-2.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.28\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-2-stat.jpeg}
+		\caption{}
+	\end{subfigure}
+	
+	\caption{Results of anomalous trajectories classification ($2.txt$)}
+	\label{fig:classif-anom-res-2}
 \end{figure}
