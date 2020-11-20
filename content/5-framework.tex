@@ -198,7 +198,7 @@ It is obvious that neither 2 or 4 key points are not enough to describe even the
 	\label{fig:few_kp_cl}
 \end{figure}
 
-To deal with that and to decrease the influence of the impossibility to find critical points in some cases, obtained key points are augmented with additive key points by choosing them from an input trajectory using following algorithm:
+To deal with that and to decrease the influence of the impossibility to find critical points in some cases, obtained key points are augmented with additive key points by choosing them from an input trajectory using following algorithm (Listing \ref{lst:calc-add-points}):
 
 \begin{itemize}
 	\setlength\itemsep{0em}
@@ -208,114 +208,25 @@ To deal with that and to decrease the influence of the impossibility to find cri
 	\item add points, which are neither equal or too close to any of the existing ones.
 \end{itemize}
 
-The results of performed polynomial regression approximation and key points calculation are presented in Figure \ref{fig:regr-kp}. The original trajectory data is visualized using a red color, while the blue trajectory points correspond to data points obtained using the functions of a polynomial approximation for the same time points. Key points of each trajectory are emphasized using bold blue square dots. It can be seen that the approximation function is close to the original trajectory function, for some trajectories approximation gives the same coordinates as in the original data (for trajectories with approximation polynomials having $R^2 \approx 1.0$). Also key points accurately follow the approximation line and describe the trajectory properly, hence, they can be used instead of original trajectory points to simplify the further trajectories analysis. 
+\lstinputlisting[caption={Calculating additive key points}, label={lst:calc-add-points}] {listings/calcAddPoints.java}
 
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}[!htb]{0.68\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_full.png}
-		\caption{full $2.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_loop.png}
-		\caption{loop from $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_turn.png}
-		\caption{turn from $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_complex.png}
-		\caption{complex $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_curve_2.png}
-		\caption{curve from $2.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_complex_3.png}
-		\caption{complex from $3.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_curve_3.png}
-		\caption{curve from $3.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.3\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/regr_kp_curve_4.png}
-		\caption{curve from $4.txt$}
-	\end{subfigure}
+So, taken as a whole, the process of choosing key points from approximation polynomials can be summed up as in Listing \ref{lst:choose-kps}.
 
-	\caption{Results of polynomial regression with emphasizing key points}
-	\label{fig:regr-kp}
-\end{figure}
+\lstinputlisting[caption={Choosing key points}, label={lst:choose-kps}] {listings/kpChoosing.java}
+
+\subsection{Trajectories Approximation using RDP Algorithm}
+
+As well as the Polynomial Regression implementation, for traditional RDP approximation approach the implementation by Lukasz Wiktor\footnote{Ramer-Douglas-Peucker implementation \url{https://github.com/LukaszWiktor/series-reducer}} was used. The method takes the original trajectory points and positive $'varepsilon$ parameter value as inputs. The method returns decreased amount of original trajectory points. The algorithms works in a recursive way by iteratively dividing the input list of trajectory points and working with two parts. Since on each step algorithms searches for the point farther than the $\varepsilon$ from the closest simplification line till no such points left, the resulting amount of trajectory points in the so-called simplified trajectory can be almost the same as in the initial one in the case of complex trajectories.
 
 \subsection{Trajectories Approximation using Douglas-Peucker N Algorithm}
 
+The implementation of Douglas-Peucker N algorithm was written from scratch based on the Algorithm \ref{algo:rdp-n-descr} and is given in Listing \ref{lst:rdpn-impl}.
+
+\lstinputlisting[caption={Douglas-Peucker N implementation}, label={lst:rdpn-impl}] {listings/rdpnImpl.java}
+
+Algorithm does not work with trajectories containing less than 2 \textit{TPs}, since at least first and last points from the original curve must be kept in the simplified trajectory. Method requires the desired length of approximated trajectory $count$ as input parameter and iteratively chooses the farthest point. The stop condition is defined by $count$ parameter.
+
 In comparison with the Polynomial Regression method, the accuracy of the RDP algorithm can be managed by changing the maximum distance $\varepsilon$ for the traditional RDP and by changing the $N$ value for the Douglas-Peucker N. 
-
-Simplified trajectories obtained by applying the Douglas-Peucker N algorithm are presented in Figure \ref{fig:rdp-n-res} for the parameter value $N = 9$, representing the desired amount of simplification points.
-
-\begin{figure}[!htb]
-	\begin{subfigure}[!htb]{0.32\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-curve-1.png}
-		\caption{curve from $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.32\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-turn.png}
-		\caption{turn from $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.25\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-curve.png}
-		\caption{loop from $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.48\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-straight-before.png}
-		\caption{straight trajectories $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.48\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-turns.png}
-		\caption{turns from $1.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.48\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-long-3.png}
-		\caption{selection from $3.txt$}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.48\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/rdp-n-long-4.png}
-		\caption{selection from $4.txt$}
-	\end{subfigure}
-	
-	\caption{Results of Douglas-Peucker N simplification}
-	\label{fig:rdp-n-res}
-\end{figure}
 
 \section{Trajectories Analysis}
 
@@ -329,11 +240,22 @@ Notwithstanding that the implementation of LCSS similarity measure exists in R p
 
 \subsection{Clustering}
 
-Since no appropriate implementation of hierarchical clustering for trajectories with the use of LCSS distance and capable of taking an adaptable parameters values were found, the clustering as well as LCSS similarity calculation was written from scratch guided by Algorithm \ref{algo:ahc-descr} outlined above. The source code of clustering is given in Appendix C. In accordance with the general workflow of the framework, the clustering is being initiated after the completion of parsing, filtering and approximation of the original trajectories and calculating the LCSS distance for each pair of trajectories (Listing \ref{lst:clust-call}).
+\subsubsection{Agglomerative Hierarchical Clustering}
+
+In accordance with the general workflow of the framework, the clustering is being initiated after the completion of parsing, filtering and approximation of the original trajectories and calculating the LCSS distance for each pair of trajectories (Listing \ref{lst:clust-call}).
 
 \lstinputlisting[caption={Clustering initiation}, label={lst:clust-call}]{listings/clustCall.java}
 
+Since no appropriate implementation of hierarchical clustering for trajectories with the use of LCSS distance and capable of taking an adaptable parameters values were found, the clustering as well as LCSS similarity calculation was written from scratch guided by Algorithm \ref{algo:ahc-descr} outlined above. The source code of clustering is given in Appendix C.
+
 Clustering is done in an iterative way of joining two closest clusters into one with following recalculation of a clusters similarity (proximity) matrix. The clustering method takes as an input the $OUTPUT\_CLUSTERS\_COUNT$ parameter which controls when the clustering will stop and defines the total amount of resulting clusters. If no value is passed, it will be considered as 1 and the clustering will be done till all clusters are merged into one in concordance with the basic algorithm of agglomerative hierarchical clustering, or till the further joining becomes infeasible.
+
+\subsubsection{DBSCAN Clustering}
+
+To perform DBSCAN clustering the implementation\footnote{DBSCAN Clustering implementation \url{https://www.javadoc.io/doc/org.apache.commons/commons-math3/3.4.1/org/apache/commons/math3/ml/clustering/DBSCANClusterer.html}} provided by the Apache Commons Math 3.4.1 library was used. Since method requires the data 
+in a form of points, which can be vectors of equal length, the trajectory data needs to be preprocessed (Listing \ref{lst:traj-flatten}).
+
+\lstinputlisting[caption={Trajectories flattening}, label={lst:traj-flatten}]{listings/trajFlatten.java}
 
 \subsubsection{Clusters validation}
 

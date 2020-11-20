@@ -1,0 +1,11 @@
+private void calculateKeyPoints(Trajectory currentTr) {
+    if (currentTr.length() < MAX_KP_COUNT) {
+        currentTr.setKeyPoints(currentTr.getTrajectoryPoints().stream().map(TrajectoryPoint::clone).collect(toList()));
+        return;
+    }
+
+    calculateDiffEquationSolutions(currentTr);
+    addFirstAndLastPoints(currentTr);
+    calcAdditionalKeyPoints(currentTr);
+    sortTrajectoryPoints(currentTr);
+}

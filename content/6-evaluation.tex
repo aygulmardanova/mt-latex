@@ -148,6 +148,62 @@ Thereinafter the trajectories approximated with 3\up{rd}- and 4\up{th}-degree po
 
 Such a tendency is mostly distinguishable while considering trajectories from the first intersection, which can supposed to be the representative set of trajectories since it has the largest amount of data instances. It is also worth noting that the second trajectories data set ($2.txt$) has only 10 trajectories in the first group, hence the trajectories speed analysis can not be very accurate.
 
+The results of performed polynomial regression approximation and key points calculation are presented in Figure \ref{fig:regr-kp111}. The original trajectory data is visualized using a red color, while the blue trajectory points correspond to data points obtained using the functions of a polynomial approximation for the same time points. Key points of each trajectory are emphasized using bold blue square dots. It can be seen that the approximation function is close to the original trajectory function, for some trajectories approximation gives the same coordinates as in the original data (for trajectories with approximation polynomials having $R^2 \approx 1.0$). Also key points accurately follow the approximation line and describe the trajectory properly, hence, they can be used instead of original trajectory points to simplify the further trajectories analysis. 
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.68\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_full.png}
+		\caption{full $2.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_loop.png}
+		\caption{loop from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_turn.png}
+		\caption{turn from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_complex.png}
+		\caption{complex $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_curve_2.png}
+		\caption{curve from $2.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_complex_3.png}
+		\caption{complex from $3.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_curve_3.png}
+		\caption{curve from $3.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.3\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/regr_kp_curve_4.png}
+		\caption{curve from $4.txt$}
+	\end{subfigure}
+	
+	\caption{Results of polynomial regression with emphasizing key points}
+	\label{fig:regr-kp111}
+\end{figure}
+
 \subsubsection{Summary}
 
 Hence, it follows up that the higher-order polynomial functions are preferred to approximate trajectories of following groups:
@@ -169,7 +225,7 @@ Comparison of total length of approximated trajectories and the positional error
 	\caption{Overview of min, avg and max length and positional errors for trajectories, approximated with RDP algorithm}
 	\label{table:rdp_length_pos_err}
 	
-	\setlength{\tabcolsep}{10pt}
+	\setlength{\tabcolsep}{9pt}
 	\centering
 	\begin{tabular}[c]{|| C{2cm} C{2cm} C{2cm} | C{2cm} C{2cm} C{2cm} ||} 
 		\hline
@@ -214,7 +270,58 @@ However, notwithstanding that traditional RDP algorithm chooses adequate, repres
 
 \subsubsection{Douglas-Peucker N Algorithm}
 
-The same comparison is performed for the Douglas-Peucker N Algorithm for different values of $N$, results are given in Table \ref{table:rdp_n_length_pos_err}. The minimum length is equal to 2, meaning that \textit{TPs} are located on a straight line, and the trajectory coincides with the initial simplifying line, consisting of the first and last trajectory points (Figure \ref{fig:rdp_2_points_only}). Notwithstanding that, the average length is almost equal to the desired $N$ value. Moreover, as expected, increase of $N$ value leads to the decrease of the positional error. Trajectories approximated by only first and last points will be complemented by calculating middle points to fulfill the desired maximum amount of \textit{TPs} in a simplified trajectory (Figure \ref{fig:rdp_2_points_filled}). Some of the points are redundant, but improve the clustering results.
+The same comparison is performed for the Douglas-Peucker N Algorithm for different values of $N$, results are given in Table \ref{table:rdp_n_length_pos_err}. The minimum length is equal to 2, meaning that \textit{TPs} are located on a straight line, and the trajectory coincides with the initial simplifying line, consisting of the first and last trajectory points (Figure \ref{fig:rdp_2_points_only}). Notwithstanding that, the average length is almost equal to the desired $N$ value. Moreover, as expected, increase of $N$ value leads to the decrease of the positional error. 
+
+Simplified trajectories obtained by applying the Douglas-Peucker N algorithm are presented in Figure \ref{fig:rdp-n-res} for the parameter value $N = 9$, representing the desired amount of simplification points.
+
+\begin{figure}[!htb]
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-curve-1.png}
+		\caption{curve from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-turn.png}
+		\caption{turn from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.25\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-curve.png}
+		\caption{loop from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-straight-before.png}
+		\caption{straight trajectories $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-turns.png}
+		\caption{turns from $1.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-long-3.png}
+		\caption{selection from $3.txt$}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/rdp-n-long-4.png}
+		\caption{selection from $4.txt$}
+	\end{subfigure}
+	
+	\caption{Results of Douglas-Peucker N simplification}
+	\label{fig:rdp-n-res}
+\end{figure}
+
+Trajectories approximated by only first and last points will be complemented by calculating middle points to fulfill the desired maximum amount of \textit{TPs} in a simplified trajectory (Figure \ref{fig:rdp_2_points_filled}). Some of the points are redundant, but improve the clustering results.
 
 \begin{figure}[!htb]
 	\centering
@@ -397,12 +504,12 @@ The statistics of the minimum, average and maximum values of the adaptive $\vare
 		\multicolumn{5}{||c||}{$\bm{\varepsilon}\ (coeff = 20.0)$}\\
 		$X:$       			& & & & \\[0.5ex]
 		& max 	& = 	& 351.397 	& (pixels) \\[0.5ex]
-		& min 	& = 	& 23.248 	& (pixels) \\[0.5ex]
 		& avg 	& = 	& 187.32 	& (pixels) \\[0.5ex]
+		& min 	& = 	& 23.248 	& (pixels) \\[0.5ex]
 		$Y:$       			& & & & \\[0.5ex]
 		& max 	& = 	& 151.252 	& (pixels) \\[0.5ex]
-		& min 	& = 	& 10.004 	& (pixels) \\[0.5ex]
 		& avg 	& = 	& 80.63 	& (pixels) \\[0.5ex]
+		& min 	& = 	& 10.004 	& (pixels) \\[0.5ex]
 		\hline
 	\end{tabular}
 \end{table}
@@ -698,7 +805,7 @@ Taking into consideration such criterias as average and maximum approximated tra
 
 \subsection{LCSS Distances Calculation}
 
-Following Table \ref{table:lcss_dist_time} presents the time needed to perform LCSS distances calculation for filtered trajectories approximated by Polynomial regression and Douglas-Peucker N algorithms.
+Following Table \ref{table:lcss_dist_time} presents the time needed to perform LCSS distances calculation for filtered trajectories approximated by Polynomial regression and Douglas-Peucker N algorithms. Calculated values are in milliseconds. It can be seen than LCSS calculation works faster on trajectories approximated by Polynomial Regression, because Polynomial Regression approximation results in trajectories of shorter lengths and LCSS distance complexity and time consumption straightforwardly depends on the trajectories length.
 
 \begin{table}[!htb]
 	\caption{Evaluation of LCSS distances calculation}
@@ -710,15 +817,17 @@ Following Table \ref{table:lcss_dist_time} presents the time needed to perform L
 	
 	\begin{tabular}{||c|c|c|c||}
 		\hline
-		\makecell{approximation\\method} & \makecell{time (sec),\\total} & \makecell{avg time (sec),\\per pair} & comment \\[0.5ex]
+		\makecell{approximation\\method} & \makecell{time (ms),\\total} & \makecell{avg time (ms),\\per pair} & comment \\[0.5ex]
 		\hline
 		\multicolumn{4}{||c||}{$1.txt$} \\[0.5ex]
 		\hline
-		Polynomial Regression 	& xxx 	& xxx	& xxx \\[0.5ex]
+		\multicolumn{4}{||c||}{\makecell{438 trajectories, 95703 trajectory pairs,\\$adapt\_coeff = 20.0$, average linkage method}} \\[0.5ex]
+		\hline
+		Polynomial Regression 	& \makecell{1162153 ms\\(19,37 min)} 	& 12,4 ms	& \makecell{average trajectory length\\7,43 \textit{TPs}} \\[0.5ex]
 		\hline
 		RDP 	& xxx 	& xxx	& xxx \\[0.5ex]
 		\hline
-		\makecell{Douglas-Peucker N,\\$N = 8$} 	& \makecell{2110364 sec\\(35,2 min)} 	& 22,05 sec & \makecell{$adapt\_coeff = 20.0$,\\average trajectory length\\7,87 TPs,\\438 trajectories,\\95703 trajectory pairs,\\average linkage method} \\[0.5ex]
+		\makecell{Douglas-Peucker N,\\$N = 8$} 	& \makecell{2110364 ms\\(35,2 min)} 	& 22,05 ms & \makecell{average trajectory length\\7,87 \textit{TPs}} \\[0.5ex]
 		\hline
 	\end{tabular}
 \end{table}

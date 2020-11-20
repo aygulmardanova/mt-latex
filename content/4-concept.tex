@@ -102,7 +102,7 @@ While considering the visualization of trajectories on sample images taken from 
 
 \subsection{LCSS Parameters Adaptability}
 
-The traditional LCSS measure supposed using a constant $\delta$ and $\varepsilon$ parameters and does not imply making them adaptive. However, one of the objectives in this work is investigating an opportunity to increase results accuracy by exploring a functional dependency between these parameters and a distance from the camera. 
+The traditional LCSS measure supposes using a constant $\delta$ and $\varepsilon$ parameters and does not imply making them adaptive. However, one of the objectives in this work is investigating an opportunity to increase results accuracy by exploring a functional dependency between these parameters and a distance from the camera. 
 
 Since camera is placed at a fixed location on an intersection, the problems caused by a perspective can take place. It can be seen from the Figure \ref{fig:tr_p} depicting the allocation of input trajectories that with distance from the camera, which is placed at the lower fore part of the image, trajectories become more densely located relative to each other (the input data will be described and depicted in the following chapter). In the case of a constant $\varepsilon$ value, which controls the threshold while testing the spatial equality of trajectory points, trajectory points of trajectories located far from camera (meaning they appear at the upper part of the sample images and are more densely located to each other) will be incorrectly considered as similar. This can contort the following analysis and skew the further clustering results.
 
@@ -342,6 +342,23 @@ As it was already mentioned, agglomerative hierarchical clustering methods suppo
 \end{equation} 
 
 where ($C_i$, $C_j$) denotes two clusters and ($T_1$, $T_2$) corresponds to two trajectories from two clusters respectively.
+
+\subsection{DBSCAN}
+
+The difficulty of DBSCAN algorithm is that it requires the input vectors to be of equal length and was created to cluster the point data. However, it was decided to check its applicability to trajectory data, consisting of two-dimensional \textit{TPs}. To satisfy that requirements, following actions will be performed upon input trajectory data:
+
+\begin{itemize}
+	\setlength\itemsep{0em}
+	\item Approximate trajectories using Douglas-Peucker N, since the majority of approximated trajectories have the desired length;
+	\item Flatten two-dimensional trajectory vector into one-dimensional vector with doubled length (Formula \ref{eq:dbscan-flatten});
+	\item Use vector representation of a trajectory as an input data for DBSCAN clustering.
+\end{itemize}
+
+\begin{equation} \label{eq:dbscan-flatten}
+	{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n)} = > {x_1, y_1, x_2, y_2, \ldots, x_n, y_n}
+\end{equation}
+
+Moreover, DBSCAN algorithm requires the $\varepsilon$ and $minPts$ parameters to be specified, defining maximum radius of the neighborhood to be considered and minimum number of points needed for a cluster respectively. The evaluation results using different parameter values will be given in Chapter 6.
 
 \subsection{Normal and Anomalous Clusters Classification}
 

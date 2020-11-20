@@ -1,0 +1,22 @@
+/**
+ * Flatten all the given trajectories by representing each trajectory as a list of points:
+ * {(x1, y1), (x2, y2), ... (xn, yn)} --> {x1, y1, x2, y2, ..., xn, yn}
+ * All the input trajectories must be of the same length
+ *
+ * @param trajectories 		list of input trajectories
+ */
+public static void flattenTrajectories(List<Trajectory> trajectories) {
+    boolean diffLength = trajectories.stream().anyMatch(tr -> getTrajectoryPoints(tr).size() != MAX_KP_COUNT);
+    if (diffLength) {
+        throw new UnsupportedOperationException("DBSCAN can not be applied to vectors of different length");
+    }
+    for (Trajectory trajectory : trajectories) {
+        List<TrajectoryPoint> keyPoints = getTrajectoryPoints(trajectory);
+        double[] tps = new double[2 * keyPoints.size()];
+        for (int i = 0; i < keyPoints.size(); i++) {
+            tps[2 * i] = keyPoints.get(i).getX();
+            tps[2 * i + 1] = keyPoints.get(i).getY();
+        }
+        trajectory.setPoint(tps);
+    }
+}
