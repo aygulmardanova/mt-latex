@@ -73,14 +73,49 @@ Each crossroad corresponds to a 4-way intersection and is equipped with a single
 	\label{fig:is_all}
 \end{figure}
 
-Input data files contain 624, 211, 231, 237 vehicular trajectories for the each of the aforementioned intersections respectively.
+Input data files contain 624, 211, 231, 237 vehicular trajectories for the each of the aforementioned intersections respectively. Each input file is supplemented by a corresponding $JPEG$ image, depicting the intersection from the camera point of view, with a resolution $1280 * 720$. 
+
+Since trajectory data is given using pixels as measurement unit, representing the location of a trajectory point on an image, this information needs to be analyzed. Table \ref{table:traj_boundaries} gives the pixel boundaries for each input file.
+
+
+\begin{table}[htb!]
+	\caption{Input trajectories boundaries (pixels)}
+	\label{table:traj_boundaries}
+	
+	\setlength{\tabcolsep}{7pt}
+	\centering
+	\begin{tabular}[c]{|| C{4cm} | C{4cm} ||} 
+		\hline
+		
+		\multicolumn{1}{||c|}{$X$-coordinate} & \multicolumn{1}{c||}{$Y$-coordinate} \\[1ex]\cline{1-2}
+		(min, max)	& (min, max) 		\\ [2ex]
+		
+		\hline 
+		\multicolumn{2}{||c||}{$1.txt$} \\ [0.5ex]
+		(27, 1264) 	& (101, 667) \\ [2ex]
+		
+		\hline
+		\multicolumn{2}{||c||}{$2.txt$} \\ [0.5ex]
+		(16, 1250) 	& (112, 643) \\ [2ex]
+		
+		\hline 
+		\multicolumn{2}{||c||}{$3.txt$} \\ [0.5ex]
+		(36, 1258) 	& (154, 716) \\ [2ex]
+		
+		\hline 
+		\multicolumn{2}{||c||}{$4.txt$} \\ [0.5ex]	
+		(61, 1163) 	& (226, 695) \\ [2ex]
+		
+		\hline
+	\end{tabular}
+\end{table}
 
 By a trajectory anomaly we understand vehicle trajectories through the crossroad, which remarkably differ from majority of common, known trajectories. For example, if no turning to the right from the left line is allowed, such a behavior will be unknown and such a trajectory must be considered as an anomaly.
 
 \begin{figure}[!htb]
 	\centering{}
 	\includegraphics[width=0.8\textwidth]{images/tr-p.png}
-	\caption{Output of a tracking system for video the first intersection}
+	\caption{Output of a tracking system for video from the first intersection}
 	\label{fig:tr_p}
 \end{figure}
 
@@ -234,9 +269,15 @@ In comparison with the Polynomial Regression method, the accuracy of the RDP alg
 
 As it was mentioned before, LCSS measure will be used as a similarity measure. Consequently, LCSS distance will be calculated based on a LCSS similarity according to above mentioned formulas. It is worth noting that LCSS distance is symmetric and for pair of trajectories can be computed just once \cite{inproceedings:28_lcss_dsmt}.
 
-Notwithstanding that the implementation of LCSS similarity measure exists in R package \cite{online:r_lcss}, it does not allow $\delta$ and $\varepsilon$ parameters to be dynamic. For that reason the custom implementation was written. The method for LCSS calculation is presented in Listing \ref{lst:lcss-calc}. 
+Notwithstanding that the implementation of LCSS similarity measure exists in R package \cite{online:r_lcss}, it does not allow $\delta$ and $\varepsilon$ parameters to be dynamic. For that reason the custom implementation was written. The method for LCSS calculation is presented in Listing \ref{lst:lcss-calc}. Implementation supports both static and adaptive $\varepsilon$ values.  
 
 \lstinputlisting[caption={LCSS calculation}, label={lst:lcss-calc}] {listings/calcLCSS.java}
+
+\subsubsection{$\bm{\varepsilon}$ Parameter Adaptability}
+
+Adaptive $\varepsilon$ values calculation depends on the distance between current \textit{TP} and \textit{CP}. The implementation is given in Listing \ref{lst:eps-calc}. The initial idea was to use the same $ADAPT\_COEFF$ value for both $X$- and $Y$- coordinates and all the input files, however, using different $ADAPT\_COEFF_x$ and $ADAPT\_COEFF_y$ values give better results. Comparison of different values will be presented in Chapter 6.
+
+\lstinputlisting[caption={Adaptive $\varepsilon$ calculation}, label={lst:eps-calc}] {listings/epsCalc.java}
 
 \subsection{Clustering}
 
@@ -277,22 +318,22 @@ The most representative cluster modeling results are shown in Figure \ref{fig:cm
 
 \begin{figure}[!htb]
 	\centering
-	\begin{subfigure}[!htb]{0.7\textwidth}
+	\begin{subfigure}[!htb]{0.48\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/cm-1-from-8-0_95.png}
 		\caption{cluster 1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.48\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cm-4-from-8-0_95.png}
+		\caption{cluster 4}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[!htb]{0.7\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/cm-3-from-8-0_95.png}
 		\caption{cluster 3}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.7\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/cm-4-from-8-0_95.png}
-		\caption{cluster 4}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[!htb]{0.7\textwidth}
@@ -312,98 +353,3 @@ To perform anomalies detection, trajectories classification is used, which is ba
 \lstinputlisting[caption={Trajectories classification}, label={lst:traj-classif}]{listings/trajClassif.java}
 
 Classification algorithm prints out the classification results with specifying the closest clusters with the calculated similarity value.
-
-Figures \ref{fig:classif-norm-res-1} -- \ref{fig:classif-norm-res-2} present the classification results using normal trajectories. Red trajectories denote the closest cluster; blue trajectory, depicted using bold \textit{TPs}, emphasizes the corresponding \textit{CM}; the input trajectory plotted using cyan color.
-
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}[!htb]{0.40\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-1.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.57\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-2.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.485\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-3.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.485\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-4.jpeg}
-		\caption{}
-	\end{subfigure}
-	
-	\caption{Results of normal trajectories classification ($1.txt$)}
-	\label{fig:classif-norm-res-1}
-\end{figure}
-
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}[!htb]{0.97\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-1.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.97\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-2.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.485\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-3.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.485\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-4.jpeg}
-		\caption{}
-	\end{subfigure}
-	
-	\caption{Results of normal trajectories classification ($2.txt$)}
-	\label{fig:classif-norm-res-2}
-\end{figure}
-
-Results of anomalous trajectories clustering are given along with the calculated 
-similarity, denoting the belonging of trajectory to the cluster (Figure \ref{fig:classif-anom-res-2}).
-
-\begin{figure}[!htb]
-	\centering
-	\begin{subfigure}[!htb]{0.70\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-1.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.28\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-1-stat.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.70\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-2.jpeg}
-		\caption{}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}[!htb]{0.28\textwidth}
-		\centering{}
-		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-2-stat.jpeg}
-		\caption{}
-	\end{subfigure}
-	
-	\caption{Results of anomalous trajectories classification ($2.txt$)}
-	\label{fig:classif-anom-res-2}
-\end{figure}

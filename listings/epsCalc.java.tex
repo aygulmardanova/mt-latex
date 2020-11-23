@@ -1,0 +1,31 @@
+public class ClusteringUtils {
+	
+	/**
+	* For each trajectory in @trajectories calc the adaptive (*$\varepsilon_x$*) and (*$\varepsilon_y$*)
+	* for each trajectory point (key points for regression, and rdp points for RDP, RDP_N algorithms)
+	*
+	* @param trajectories    list of trajectories to calculate Euclidean distances between each pair
+	*/
+	public static void calcEuclDistancesToCP(List<Trajectory> trajectories, TrajectoryPoint cameraPoint, int maxX, int minX, int maxY, int minY) {
+		trajectories.forEach(tr ->
+			getTrajectoryPoints(tr).forEach(kp -> {
+				double cpDist = kp.distanceTo(cameraPoint);
+				kp.setEpsilons(cpDist, maxX, minX, maxY, minY);
+			})
+		);
+	}
+	...
+}
+
+public class TrajectoryPoint {
+	...
+	
+	public void setEpsilons(double cpDist, int maxX, int minX, int maxY, int minY) {
+		setCpDist(cpDist);
+		double (*$\varepsilon_x$*) = ADAPT_COEFF(*$_x$*) * (maxX - minX) / cpDist;
+		setEpsilonX((*$\varepsilon_x$*));
+		double (*$\varepsilon_y$*) = ADAPT_COEFF(*$_y$*) * (maxY - minY) / cpDist;
+		setEpsilonY((*$\varepsilon_y$*));
+	}
+	
+}

@@ -433,7 +433,7 @@ As it can be seen, Douglas-Peucker N algorithm leads to much more accurate resul
 
 \subsection{Trajectories Clustering Results}
 
-To compare the clustering results, several experiments were carried out on different input data ($1.txt$, $2.txt$), using static and adaptive values of the $\varepsilon$ parameter, with a different number of final clusters (7, 8, 9). The obtained clusters were validated in two ways: visual test and DI value. The results of experiments and discussion will be presented below.
+To compare the clustering results, several experiments were carried out on different input data ($1.txt$, $2.txt$), using static and adaptive values of the $\varepsilon$ parameter, with a different number of final clusters (7, 8, 9, 10, 11, 12). The obtained clusters were validated in two ways: visual test and DI value. The results of experiments and discussion will be presented below.
 
 To evaluate the efficiency of using the adaptive values of the $\varepsilon$ parameter, and compare them with the results when using static values, clustering was performed on the data from the first intersection ($1.txt$) for 7, 8 and 9 resulting clusters at different values of the coefficient participating in the formulas for calculating $\varepsilon$ (\ref{eq:delta-adapt}-\ref{eq:epsY-adapt}):
 
@@ -441,33 +441,38 @@ $static: coeff = \{\bm{0.1}, \bm{0.15}, \ldots\}$
 
 $adaptive: coeff = \{0.15, \bm{0.20}, \ldots, 0.25, \ldots\}$
 
-Hence, in LCSS metric calculation algorithm the static and adaptive parameters $\delta$ and $\varepsilon$ were implemented. The following relations were chosen as the functional relationship between the $\varepsilon$ parameter and the distance between the trajectory point and the camera:
+The following shows the results for the highlighted values of the $coeff_\varepsilon$ parameter. In this case, when comparing the clustering results using the static parameter $\varepsilon$, best results were obtained with the value of coefficient $coeff = 20.0$, for the adaptive parameter -- for the value of coefficient $coeff = 20.0$.
 
-\begin{equation} \label{eq:delta-adapt}
-	\delta = coeff_\delta * \min{(t1.length(), t2.length())}
-\end{equation}
+For better understanding of adaptive parameter values, the overview of distances from camera is given in Table \ref{table:cp_dist_res}. The values of the static parameter $\varepsilon$ for each of the axes with different values of the coefficients are presented in Table \ref{table:eps_st}.
 
-\begin{equation} \label{eq:epsX-st}
-	static:\ \ \ \ \varepsilon_x = coeff_\varepsilon * (maxX - minX)
-\end{equation}
-
-\begin{equation} \label{eq:epsY-st}
-	static:\ \ \ \ \varepsilon_y = coeff_\varepsilon * (maxY - minY)
-\end{equation}
-
-\begin{equation} \label{eq:epsX-adapt}
-	adaptive:\ \ \ \ \varepsilon_x = coeff_\varepsilon * \frac{(maxX - minX)}{distToCP}
-\end{equation}
-
-\begin{equation} \label{eq:epsY-adapt}
-	adaptive:\ \ \ \ \varepsilon_y = coeff_\varepsilon * \frac{(maxY - minY)}{distToCP}
-\end{equation}
-
-where $distToCP$ is calculated as an Euclidean distance between the given point of the trajectory and the point where the camera is located at the current intersection, and $coeff_\varepsilon$ is the coefficient, the value of which will be selected experimentally from the set of the above mentioned. The following will show the results for the highlighted values of the $coeff_\varepsilon$ parameter.
-
-In this case, when comparing the clustering results using the static parameter $\varepsilon$, best results were obtained with the value of coefficient $coeff = 20.0$, for the adaptive parameter -- for the value of coefficient $coeff = 20.0$.
-
-The values of the static parameter $\varepsilon$ for each of the axes with different values of the coefficients are presented in Table \ref{table:eps_st}.
+\begin{table}[htb!]
+	\caption{Overview of miv, avg, max distance to camera for input files ($cpDist$, in pixels)}
+	\label{table:cp_dist_res}
+	
+	\setlength{\tabcolsep}{10pt}
+	\centering
+	
+	\begin{tabular}[c]{||C{2cm} C{2cm} C{2cm}||}
+		\hline
+		min 	& avg	& max 	\\ [2ex]
+		\hline
+		\multicolumn{3}{||c||}{$1.txt$} \\[2ex]
+		75.71	& 572.61	& 1031.66	\\[0.5ex]
+		\hline
+		
+		\multicolumn{3}{||c||}{$2.txt$} \\[2ex]
+		71.51	& 464.99	& 1061.59	\\[0.5ex]
+		\hline
+		
+		\multicolumn{3}{||c||}{$3.txt$} \\[2ex]
+		59.2	& 425.95	& 1019.7	\\[0.5ex]
+		\hline
+		
+		\multicolumn{3}{||c||}{$4.txt$} \\[2ex]
+		106.17	& 437.18	& 869.45	\\[0.5ex]
+		\hline
+	\end{tabular}
+\end{table}
 
 \begin{table}[htb!]
 	\caption{Values of static $\varepsilon$ parameter for different coefficient values}
@@ -514,9 +519,9 @@ The statistics of the minimum, average and maximum values of the adaptive $\vare
 	\end{tabular}
 \end{table}
 
-As it can be seen from the given tables, static values of the $\varepsilon$ parameter at the coefficient $coeff_\varepsilon = 0.15$ are approximately equal to the average values of the adaptive $\varepsilon$ values at the coefficient $coeff_varepsilon = 20.0$. Consequently, it can be expected that the static $\varepsilon$ values ​​at this coefficient value will show the best results.
+As it can be seen from the given tables, static values of the $\varepsilon$ parameter at the coefficient $coeff_\varepsilon = 0.15$ are approximately equal to the average values of the adaptive $\varepsilon$ values at the coefficient $coeff_\varepsilon = 20.0$. Consequently, it can be expected that the static $\varepsilon$ values ​​at this coefficient value will show the best results.
 
-The comparison of static $\varepsilon$ values was carried out with the coefficients $0.10$ and $0.15$. The experimental results for the data from the first and second intersections are presented in Tables \ref{table:st_eps_res_1}-\ref{table:st_eps_res_2}. Visualization of corresponding clustering results is given in Appendix D.
+The comparison of static $\varepsilon$ values was carried out with the coefficients $0.10$ and $0.15$. The experimental results for the data from the first and second intersections are presented in Tables \ref{table:st_eps_res_1} -- \ref{table:st_eps_res_2}. Visualization of corresponding clustering results is given in Appendix D.
 
 \begin{table}[htb!]
 	\caption{Comparison of DI values for static $\varepsilon$ parameter ($1.txt$)}
@@ -572,6 +577,13 @@ Data from the second intersection ($2.txt$) was used to carry out 3 experiments 
 
 \begin{figure}[!htb]
 	\centering
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/11cl-di-1.jpeg}
+		\caption{11 resulting clusters, DI = 0.97}
+		\label{fig:11cl-di-1}
+	\end{subfigure}
+	\hfill
 	\begin{subfigure}[!htb]{0.495\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/9cl-di-1.jpeg}
@@ -632,6 +644,143 @@ Validation of the resulting clusters was carried out using the DI metric, the fo
 \end{itemize}
 
 However, despite the high DI value, it can be noticed that the clustering result contains errors: blue key points corresponding to the blue cluster of trajectories are superimposed on the trajectories of the red cluster. A possible reason for such a behavior is a high degree of similarity between these trajectories and trajectories from the blue cluster in the upper left half of the figure: this area is represented by a dense accumulation of blue dots.
+
+\subsubsection{Adaptive $\bm{\varepsilon}$ values analysis}
+
+In order to find the best $\varepsilon$ values for each intersection, several experiments were carried out using different $ADAPT\_COEFF_x$ and $ADAPT\_COEFF_y$ values. First experiments were carried out using same coefficient values for both $X$- and $Y$-coordinates, however, for input data from second, third and forth intersections ($2.txt$, $3.txt$, $4.txt$) using different values lead to better results, but not for the first intersection. Also different adaptive parameter value calculation relations were used besides Formulas \ref{eq:epsXY-adapt}. For example, relations from Formula \ref{eq:eps-adapt-1} work better for data from $1.txt$. Using different coefficients also leads to very precise clustering results for all the input files: $ADAPT\_COEFF_x = 15.0$ and $ADAPT\_COEFF_y = 20.0$ (Formula \ref{eq:eps-adapt-234}). Moreover, it was found out that clustering to 11 clusters is more precise than to 7, 8 or 9. Results of clustering are given on Figures \ref{fig:clust-res-1-pr-diff-coeff} -- \ref{fig:clust-res-1-rdp-n-diff-coeff}.
+
+\begin{subequations}\label{eq:eps-adapt-1}
+	\begin{align}
+		\varepsilon_x = \frac{(maxX - minX)}{\sqrt{distToCP}} \\
+		\varepsilon_y = \frac{(maxX - minX)}{\sqrt{distToCP}}
+	\end{align}
+\end{subequations}
+
+\begin{subequations}\label{eq:eps-adapt-234}
+	\begin{align}
+		\varepsilon_x = coeff_{\varepsilon}X * \frac{(maxX - minX)}{distToCP}, coeff_{\varepsilon}X = 15.0 \\
+		\varepsilon_y = coeff_{\varepsilon}Y * \frac{(maxX - minX)}{distToCP}, coeff_{\varepsilon}Y = 20.0
+	\end{align}
+\end{subequations}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-pr-diff-coeff-1.png}
+		\caption{11 resulting clusters, DI = 0.97 ($1.txt$)}
+		\label{fig:clust-res-1-pr-diff-coeff-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-pr-diff-coeff-2.png}
+		\caption{11 resulting clusters, DI = 0.94 ($2.txt$)}
+		\label{fig:clust-res-1-pr-diff-coeff-2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-pr-diff-coeff-3.png}
+		\caption{11 resulting clusters, DI = 0.90 ($3.txt$)}
+		\label{fig:clust-res-1-pr-diff-coeff-3}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-rdp-n-diff-coeff-4.png}
+		\caption{11 resulting clusters, DI = 0.91 ($4.txt$)}
+		\label{fig:clust-res-1-pr-diff-coeff-4}
+	\end{subfigure}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$ using Formula \ref{eq:eps-adapt-234}, Polynomial Regression approximation, $N = 8$}
+	\label{fig:clust-res-1-pr-diff-coeff}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-rdp-n-diff-coeff-1.png}
+		\caption{11 resulting clusters, DI = 0.97 ($1.txt$)}
+		\label{fig:clust-res-1-rdp-n-diff-coeff-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-rdp-n-diff-coeff-2.png}
+		\caption{11 resulting clusters, DI = 0.95 ($2.txt$)}
+		\label{fig:clust-res-1-rdp-n-diff-coeff-2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-rdp-n-diff-coeff-3.png}
+		\caption{11 resulting clusters, DI = 0.93 ($3.txt$)}
+		\label{fig:clust-res-1-rdp-n-diff-coeff-3}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-rdp-n-diff-coeff-4.png}
+		\caption{11 resulting clusters, DI = 0.92 ($4.txt$)}
+		\label{fig:clust-res-1-rdp-n-diff-coeff-4}
+	\end{subfigure}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$ using Formula \ref{eq:eps-adapt-234}, Douglas-Peucker N approximation, $N = 8$}
+	\label{fig:clust-res-1-rdp-n-diff-coeff}
+\end{figure}
+
+Moreover, in order to deal with the extremely huge values of $ADAPT\_COEFF$ parameters which occur close to camera point, following line was added to calculation method to restrict the upper boundary (Formulas \ref{eq:adapt-eps-upper-limit}):
+
+\begin{subequations}\label{eq:adapt-eps-upper-limit}
+	\begin{align}
+		\varepsilon_x = cpDist < 250\ ?\ 250 : \varepsilon_x \\
+		\varepsilon_y = cpDist < 250\ ?\ 250 : \varepsilon_y
+	\end{align}
+\end{subequations}
+
+However experiments showed that using different upper boundaries for different files works better. For example data from $2.txt$, $3.txt$ and $4.txt$ is being clustered better while using different values (Formula \ref{eq:adapt-eps-upper-limit-new}):
+
+\begin{subequations}\label{eq:adapt-eps-upper-limit-new}
+	\begin{align}
+	\varepsilon_x = cpDist < 250\ ?\ 250 : \varepsilon_x \\
+	\varepsilon_y = cpDist < 150\ ?\ 200 : \varepsilon_y
+	\end{align}
+\end{subequations}
+
+Result of clustering using equations from Formula \ref{eq:adapt-eps-upper-limit-new} is given in Figure \ref{fig:clust-res-1-regr-sqrt}.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-regr-sqrt-1.png}
+		\caption{11 resulting clusters, DI = 0.94 ($1.txt$)}
+		\label{fig:clust-res-1-regr-sqrt-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-regr-sqrt-2.png}
+		\caption{9 resulting clusters, DI = 0.93 ($2.txt$)}
+		\label{fig:clust-res-1-regr-sqrt-2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-regr-sqrt-3.png}
+		\caption{8 resulting clusters, DI = 0.87 ($3.txt$)}
+		\label{fig:clust-res-1-regr-sqrt-3}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.23\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-res/clust-res-1-regr-sqrt-4.png}
+		\caption{7 resulting clusters, DI = 0.87 ($4.txt$)}
+		\label{fig:clust-res-1-regr-sqrt-4}
+	\end{subfigure}
+	\caption{Clustering results for adaptive $\bm{\varepsilon}$ from Formula \ref{eq:eps-adapt-1} with limits from Formula \ref{eq:adapt-eps-upper-limit-new}, Polynomial Regression approximation}
+	\label{fig:clust-res-1-regr-sqrt}
+\end{figure}
 
 \subsubsection{Approximation Methods Comparison}
 
@@ -739,12 +888,13 @@ Moreover, according to the results, the use of adaptive values for the $\varepsi
 \subsection{Clusters Classification Results}
 
 As it was described in the previous chapter, clusters with small cardinalities are considered as clusters of anomalous trajectories. Figures \ref{fig:cl-classif-res-1} -- \ref{fig:cl-classif-res-2} depict normal and anomalous clusters for data from first and second intersections respectfully.
+
 \begin{figure}[!htb]
 	\centering
 	\begin{subfigure}[!htb]{0.495\textwidth}
 		\centering{}
 		\includegraphics[width=\textwidth]{images/cl-classif-norm-1.jpeg}
-		\caption{all clusters}
+		\caption{all clusters (8 clusters)}
 		\label{fig:cl-classif-norm-1}
 	\end{subfigure}
 	\hfill
@@ -753,6 +903,20 @@ As it was described in the previous chapter, clusters with small cardinalities a
 		\includegraphics[width=\textwidth]{images/cl-classif-anom-1.jpeg}
 		\caption{anomalous clusters}
 		\label{fig:cl-classif-anom-1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-classif-norm-11.png}
+		\caption{all clusters (11 clusters, different $\varepsilon$ coefficients)}
+		\label{fig:cl-classif-norm-11}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.495\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/cl-classif-anom-11.png}
+		\caption{anomalous clusters}
+		\label{fig:cl-classif-anom-11}
 	\end{subfigure}
 	\caption{Normal and anomalous clusters classification results ($1.txt$)}
 	\label{fig:cl-classif-res-1}
@@ -778,6 +942,102 @@ As it was described in the previous chapter, clusters with small cardinalities a
 \end{figure}
 
 \subsection{Trajectories Classification Results}
+
+
+Figures \ref{fig:classif-norm-res-1} -- \ref{fig:classif-norm-res-2} present the classification results using normal trajectories. Red trajectories denote the closest cluster; blue trajectory, depicted using bold \textit{TPs}, emphasizes the corresponding \textit{CM}; the input trajectory plotted using cyan color.
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.40\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-1.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.57\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-2.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-3.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-1-4.jpeg}
+		\caption{}
+	\end{subfigure}
+	
+	\caption{Results of normal trajectories classification ($1.txt$)}
+	\label{fig:classif-norm-res-1}
+\end{figure}
+
+\begin{figure}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.97\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-1.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.97\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-2.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-3.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.485\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-norm-res-2-4.jpeg}
+		\caption{}
+	\end{subfigure}
+	
+	\caption{Results of normal trajectories classification ($2.txt$)}
+	\label{fig:classif-norm-res-2}
+\end{figure}
+
+Results of anomalous trajectories clustering are given along with the calculated 
+similarity, denoting the belonging of trajectory to the cluster (Figure \ref{fig:classif-anom-res-2}).
+
+\begin{figure}[htb!]
+	\centering
+	\begin{subfigure}[!htb]{0.70\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-1.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.28\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-1-stat.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.70\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-2.jpeg}
+		\caption{}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[!htb]{0.28\textwidth}
+		\centering{}
+		\includegraphics[width=\textwidth]{images/classif-res/classif-anom-res-2-2-stat.jpeg}
+		\caption{}
+	\end{subfigure}
+	
+	\caption{Results of anomalous trajectories classification ($2.txt$)}
+	\label{fig:classif-anom-res-2}
+\end{figure}
 
 \section{Evaluation of Performance}
 

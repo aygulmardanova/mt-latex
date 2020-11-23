@@ -134,6 +134,28 @@ The approach to make the parameters adaptive considered in this work is describe
 	\label{fig:adaptivity}
 \end{figure}
 
+Hence, in LCSS metric calculation algorithm the static and adaptive parameters $\delta$ and $\varepsilon$ were implemented. The following relations were chosen as the functional relationship between the $\varepsilon$ parameter and the distance between the trajectory point and the camera:
+
+\begin{equation} \label{eq:delta-adapt}
+	\delta = coeff_\delta * \min{(t1.length(), t2.length())}
+\end{equation}
+
+\begin{subequations} \label{eq:epsXY-st}
+	\begin{align}
+		static:\ \ \ \ \varepsilon_x = coeff_\varepsilon * (maxX - minX) \\
+		static:\ \ \ \ \varepsilon_y = coeff_\varepsilon * (maxY - minY)
+	\end{align}
+\end{subequations}
+
+\begin{subequations} \label{eq:epsXY-adapt}
+	\begin{align}
+		adaptive:\ \ \ \ \varepsilon_x = coeff_\varepsilon * \frac{(maxX - minX)}{distToCP} \\
+		adaptive:\ \ \ \ \varepsilon_y = coeff_\varepsilon * \frac{(maxY - minY)}{distToCP}
+	\end{align}
+\end{subequations}
+
+where $distToCP$ is calculated as an Euclidean distance between the given point of the trajectory and the point where the camera is located at the current intersection, and $coeff_\varepsilon$ is the coefficient, the value of which will be selected experimentally from the set of the above mentioned. More detailed discussion of coefficient and relation selection will be given in Chapter 6 along with results of further clustering.
+
 In order to optimize the calculation of a distance to camera point and avoid recalculation of it multiple times during the LCSS computation algorithm, this distance is being calculated in advance and stored for each trajectory point.
 
 \section{Trajectories Approximation}
@@ -167,11 +189,11 @@ A regression can be linear or polynomial (nonlinear, curvilinear) depending on t
 The visualization of input trajectory data is given in Figure \ref{fig:tr_p}. As it can be seen from the picture, neither the linear or $2\up{nd}$ order functions can not fit the data properly due to complexity of trajectory forms. For that reason it was decided to focus on approximation using higher-order polynomial regression. The evaluation of polynomial regression with different degrees will be given further and the following discussion and implementation will be intended to find a suitable $n\up{th}$ order polynomial equation and parameter values to represent each input trajectory as a `trajectory function'. Since trajectory data is represented by two-dimensional spatial data along with temporal data and it is necessary to approximate spatial information, $x$- and $y$-coordinates will be considered as dependent variables and $time$ will be used as an independent variable. Consequently, polynomial regression will be performed twice with two output polynomial functions representing $x(t)$ and $y(t)$ for each of the input trajectories $T$:
 
 \begin{equation}\label{eq:regr-func}
-\forall\ T = [\ldots (x_i, y_i, t_i) \ldots] = > T(t) = 
-\begin{cases}
-x = x(t) \\
-y = y(t) \\
-\end{cases}
+	\forall\ T = [\ldots (x_i, y_i, t_i) \ldots] = > T(t) = 
+		\begin{cases}
+			x = x(t) \\
+			y = y(t) \\
+		\end{cases}
 \end{equation}
 
 Trajectories will be converted from a shape of a list of trajectory points into equations (time functions) defined in a geometrical space, which can represent approximately all of them. Taking key points of the representative polynomial can decrease the size of the trajectory therethrough reducing the total operational cost and computational complexity of LCSS calculation. Moreover, mathematical equations are able to store information in a dense form and apart from other advantages such a data reduction leads to consuming less amount of space and increasing the storage efficiency \cite{article:behav_form_extr}. Also so called built `trajectory functions's can provide interpolation and discover the missing data points.
@@ -183,7 +205,7 @@ Trajectories will be converted from a shape of a list of trajectory points into 
 In order to achieve better approximation the evaluation of polynomial regression results was performed using the Coefficient of Determination denoted by $R^2$ (also known as a $R$-$squared$ score, \textit{Pearson's coefficient of regression}) \cite{inbook:stats}. $R^2$ measures the proportion of the response dependent variable variance that can be explained by the regression model with given parameters and is predictable from the independent variable and can be calculated as follows: 
 
 \begin{equation}\label{eq:r_sq}
-R^2 = 1 - \frac{SSE}{TSS} = 1 - \frac{\sum{(y_i - \hat{y_i})^2}}{\sum{(y_i - \overline{y})^2}}
+	R^2 = 1 - \frac{SSE}{TSS} = 1 - \frac{\sum{(y_i - \hat{y_i})^2}}{\sum{(y_i - \overline{y})^2}}
 \end{equation}
 
 where $SSE$ (Sum of Squares due to Error) is calculated as a sum of squared differences between actual $y_i$, and predicted $\hat{y_i}$ dependent variable values and $TSS$ (Total Sum of Squares) is calculated as a sum of squared deviations of an actual value $y_i$ from a mean $\overline{y}$.
@@ -247,7 +269,7 @@ The recursive process continues till all points from the original curve satisfy 
 			simplified = \{trajectory[1], trajectory[end]\}
 		}
 	}
-\end{algorithm}
+ \end{algorithm}
 
 \bigbreak
 
