@@ -1085,8 +1085,6 @@ Following Table \ref{table:lcss_dist_time} presents the time needed to perform L
 		\hline
 		Polynomial Regression 	& \makecell{1162153 ms\\(19,37 min)} 	& 12,4 ms	& \makecell{average trajectory length\\7,43 \textit{TPs}} \\[0.5ex]
 		\hline
-		RDP 	& xxx 	& xxx	& xxx \\[0.5ex]
-		\hline
 		\makecell{Douglas-Peucker N,\\$N = 8$} 	& \makecell{2110364 ms\\(35,2 min)} 	& 22,05 ms & \makecell{average trajectory length\\7,87 \textit{TPs}} \\[0.5ex]
 		\hline
 	\end{tabular}
@@ -1094,7 +1092,7 @@ Following Table \ref{table:lcss_dist_time} presents the time needed to perform L
 
 \subsection{Trajectories Clustering and Classification}
 
-In Table \ref{table:clust_time} the time needed to perform clustering of filtered and approximated trajectories is given. Approximation was performed using Polynomial Regression and Douglas-Peucker N techniques.
+In Table \ref{table:clust_time} the time needed to perform clustering of filtered and approximated trajectories is given. Clustering does not depend on the approximation method since it uses pre-calculated LCSS distances, so it only depends on the number of trajectories. Given results are obtained using trajectories approximated by Douglas-Peucker N technique. Analyzing time needed per trajectory pair, Agglomerative Hierarchical clustering algorithm can process approximately 66-73 pairs per millisecond.
 
 \begin{table}[!htb]
 	\caption{Evaluation of trajectories clustering}
@@ -1104,18 +1102,32 @@ In Table \ref{table:clust_time} the time needed to perform clustering of filtere
 	\centering
 	\setcellgapes{3pt}\makegapedcells
 	
-	\begin{tabular}{||c|c|c|c||}
+	\begin{tabular}{||c|c|c||}
 		\hline
-		\makecell{approximation\\method} & \makecell{time (min),\\total} & \makecell{avg time (sec),\\per pair} & comment \\[0.5ex]
+		\makecell{time (ms),\\total} & \makecell{trajectory pairs,\\per ms} & comment \\[0.5ex]
+
 		\hline
-		\multicolumn{4}{||c||}{$1.txt$} \\[0.5ex]
+		\multicolumn{3}{||c||}{$1.txt$} \\[0.5ex]
 		\hline
-		Polynomial Regression 	& xxx 	& xxx	& xxx \\[0.5ex]
+		1310 	& 73	& \makecell{438 input trajectories,\\95703 trajectory pairs} \\[0.5ex]
+
 		\hline
-		Douglas-Peucker N, $N = 8$ 	& xxx 	& xxx	& xxx \\[0.5ex]
-		
-		
+		\multicolumn{3}{||c||}{$2.txt$} \\[0.5ex]
+		\hline
+		323 	& 66,6	& \makecell{208 input trajectories,\\21528 trajectory pairs} \\[0.5ex]
+
+		\hline
+		\multicolumn{3}{||c||}{$3.txt$} \\[0.5ex]
+		\hline
+		267 	& 69	& \makecell{193 input trajectories,\\18528 trajectory pairs} \\[0.5ex]
+
+		\hline
+		\multicolumn{3}{||c||}{$4.txt$} \\[0.5ex]
+		\hline
+		240 	& 66,4	& \makecell{179 input trajectories,\\15931 trajectory pairs} \\[0.5ex]
+	
 		\hline
 	\end{tabular}
 \end{table}
 
+To perform clusters classification and clusters modeling evaluation data from $1.txt$ was clustered into 11 resulting clusters. Both processes together took 14 milliseconds. An input trajectory classification takes $\approx$ 400-450 milliseconds depending on the input length and includes: adaptive $\varepsilon$ parameter calculation, computing distances to all the known clusters and choosing the closest one, classifying a trajectory as normal or anomalous.

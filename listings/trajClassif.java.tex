@@ -33,7 +33,7 @@
             } else {
                 System.out.println(String.format("closest cl is \%s", closestCluster[0].getId()));
                 System.out.println(closestCluster[0].getNormal() ? "normal trajectory" : "anomalous trajectory");
+                new DisplayImage().displayClusterAndTrajectory(getImgFileName(fileName), closestCluster[0], it);
             }
         });
-        new DisplayImage().displayAndSave(getImgFileName("1"), null, null, anomalousTrajectories, false);
     }
