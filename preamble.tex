@@ -20,6 +20,10 @@
 {\normalfont\LARGE\bfseries}{\thechapter}{1em}{}
 \titlespacing*{\chapter}{0pt}{-40pt}{30pt}
 
+\makeatletter
+	\setlength\@fptop{0\p@}
+\makeatother
+
 \let\up\textsuperscript
 
 %% ToDo notes %%
@@ -99,7 +103,7 @@
 
 %% Graphics & Illustrations %%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}			% Images and additions inserting (to load graphics)
-\usepackage{wrapfig}			% integration of graphics with wraping text
+\usepackage{wrapfig}			% integration of graphics with wrapping text
 %\usepackage{subfig}			% integration of multiple objects within a float
 \usepackage{pdfpages}			% PDF inserting, binds a graphic or page (.pdf or .jpg) in the document
 \usepackage{float}

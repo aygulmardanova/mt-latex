@@ -7,11 +7,11 @@ This chapter presents state of the art analysis of existing approaches and discu
 
 According to \cite{article:15_survey_ad}, the task of outliers detection, which is a main objective task of this work, has been an object of interest and studies of research community originating from $19\up{th}$ Century. Nowadays a huge variety of different techniques for solving the task of detecting outliers and abnormalities in video traffic data are presented, and these approaches can be classified in various ways.
 
-For example, data mining techniques in general and anomaly detection techniques as well as clustering approaches, which are one of the ways to solve the task of outliers identification, particularly can be classified as supervised, semi-supervised and unsupervised on the grounds of the manner of labeling the input data] \cite{article:15_survey_ad}\cite{article:comp_analys_odt}:
+For example, data mining techniques in general and anomaly detection techniques as well as clustering approaches, which are one of the ways to solve the task of outliers identification, particularly can be classified as supervised, semi-supervised and unsupervised on the grounds of the manner of labeling the input data \cite{article:15_survey_ad}\cite{article:comp_analys_odt}:
 
 \begin{enumerate}
 	\setlength\itemsep{0em}
-	\item \textit{Supervised}. Input data used for training contains labels for both normal and anomalous instances. As a result the algorithm can build models for both normal and abnormal classes;
+	\item \textit{Supervised}. Input data which is used for training contains labels for both normal and anomalous instances. As a result the algorithm can build models for both normal and abnormal classes;
 	\item \textit{Semi-Supervised \cite{article:15_survey_ad}} or \textit{Weakly-Supervised \cite{article:5_survey_tbsa}}. Input training data set contains class labels only for normal data instances. Such techniques are more widely used than supervised approaches, since anomalous data instances are usually not predictable and random and it is difficult to provide examples to cover all possible anomalous events;
 	\item \textit{Unsupervised}. Does not require input data to be labeled neither for normal nor anomalous data. Such algorithms are based on the expectation that normal data instances are significantly more frequent than anomalous ones in the test data set and therefore are not applicable when this assumption is disrupted.
 \end{enumerate}
@@ -32,7 +32,7 @@ The advantage of two-phased classification based algorithms is a fast testing ph
 
 Proximity based approaches decide whether a data instance is normal or anomalous based on how close or far is it located with respect to neighbors \cite{article:6_survey_anom_det_rtuvs}. Nearest-neighbor and density based approaches are based on the assumption, that «normal data instances have dense neighborhood, while anomalous data instances occur far from their closest neighbors» \cite{article:15_survey_ad}.
 
-In order to be able to compare the surrounding density for an instance under consideration with the density around its local neighbors, a distance (dissimilarity) or similarity measure between two data instances needs to be specified \cite{inproceedings:18_ardod_lstd}. By virtue of an anomaly score calculation method, techniques can be grouped into two categories: 1) the anomaly score is calculated as a distance of a data instance to its $k^th$ nearest neighbor and 2) to compute the anomaly score the relative density of each data instance is being computed \cite{article:15_survey_ad}.
+In order to be able to compare the surrounding density for an instance under consideration with the density around its local neighbors, a distance (dissimilarity) or similarity measure between two data instances needs to be specified \cite{inproceedings:18_ardod_lstd}. By virtue of an anomaly score calculation method, techniques can be grouped into two categories: 1) the anomaly score is calculated as a distance of a data instance to its $k^{th}$ nearest neighbor and 2) to compute the anomaly score the relative density of each data instance is being computed \cite{article:15_survey_ad}.
 
 These approaches has several disadvantages. First of all, in comparison with classification based anomalies detection techniques, the computational complexity of the testing phase is considerably higher, since nearest neighbors are computed by computing the distance for each test data instance with all instances from either testing and training data. In case of multi-dimensional trajectory data, the task of distance computation becomes even more complicated. Moreover, the accuracy of labeling decreases when the main assumption is violated: when normal instances have sparse neighborhood or anomalous instances have dense \cite{article:15_survey_ad}.
 
@@ -187,38 +187,38 @@ Longest Common SubSequence (LCSS) distance tries to match two trajectory sequenc
 The LCSS distance is calculated according to the Formula \ref{eq:dlcss} \cite{inproceedings:7_related_work}:
 
 \begin{equation} \label{eq:dlcss}
-	D_{LCSS}(T_1, T_2) = 1 - \frac {LCSS_{\delta, \epsilon}(T_1, T_2)} {min(m, n)}
+	D_{LCSS}(T_1, T_2) = 1 - \frac {LCSS_{\delta, \varepsilon}(T_1, T_2)} {min(m, n)}
 \end{equation}
 
-where $m$ and $n$ are lengths of trajectories $T_1$ and $T_2$ respectively. $LCSS_{\delta, \epsilon}(T_1, T_2) / min(m, n)$ can be also referred to as an LCSS similarity and takes value between 0 and 1. 
+where $m$ and $n$ are lengths of trajectories $T_1$ and $T_2$ respectively. $LCSS_{\delta, \varepsilon}(T_1, T_2) / min(m, n)$ can be also referred to as an LCSS similarity and takes value between 0 and 1. 
 
-The $LCSS_{\delta, \epsilon}(T_1, T_2)$, the longest common sub-sequence between trajectories, represents the number of matched trajectory points between trajectories $T_1$ and $T_2$ and is defined as follows (Formula \ref{eq:lcss}):
+The $LCSS_{\delta, \varepsilon}(T_1, T_2)$, the longest common sub-sequence between trajectories, represents the number of matched trajectory points between trajectories $T_1$ and $T_2$ and is defined as follows (Formula \ref{eq:lcss}):
 
 \begin{equation} \label{eq:lcss}
-	LCSS_{\delta, \epsilon}(T_1, T_2) = 
+	LCSS_{\delta, \varepsilon}(T_1, T_2) = 
 		\begin{cases}
 			0 			&\text{if $m = 0$ or $n = 0$}\\
-						&\text{(if $|t_{1_{x,m}} - t_{2_{x,n}}| \textless \epsilon$}\\
-			1 + LCSS_{\delta, \epsilon}(Head(T_1), Head(T_2)) 
-						&\text{and $|t_{1_{y,m}} - t_{2_{y,n}}| \textless \epsilon$ }\\
+						&\text{(if $|t_{1_{x,m}} - t_{2_{x,n}}| \textless \varepsilon$}\\
+			1 + LCSS_{\delta, \varepsilon}(Head(T_1), Head(T_2)) 
+						&\text{and $|t_{1_{y,m}} - t_{2_{y,n}}| \textless \varepsilon$}\\
 						&\text{and $|m - n| \le \delta$)}\\
 			max
 			\begin{cases}
-				LCSS_{\delta, \epsilon}(Head(T_1), T_2)\\
-				LCSS_{\delta, \epsilon}(T_1, Head(T_2))
+				LCSS_{\delta, \varepsilon}(Head(T_1), T_2)\\
+				LCSS_{\delta, \varepsilon}(T_1, Head(T_2))
 			\end{cases} &\text{otherwise}
 		\end{cases}
 \end{equation}
 
-As it can be seen, LCSS calculation depends on two constant parameters: $\delta$ (point spacing \cite{online:r_lcss}) and $\epsilon$ (point distance \cite{online:r_lcss} or matching threshold \cite{article:tr_sim_meas}): 
+As it can be seen, LCSS calculation depends on two constant parameters: $\delta$ (point spacing \cite{online:r_lcss}) and $\varepsilon$ (point distance \cite{online:r_lcss} or matching threshold \cite{article:tr_sim_meas}): 
 
 \begin{itemize}
 	\setlength\itemsep{0em}
 	\item parameter $\delta$ defines the maximum remoteness in terms of time between two trajectory points in which we can look to match a given point from one trajectory with another. Also can be defined as a value representing the maximum index difference between two input trajectories allowed in calculation \cite{online:r_lcss}.
-	\item constant $\epsilon$ defines the size of proximity to look for matches in terms of spatial information. According to \cite{online:r_lcss} it is a floating point number which represents the maximum allowed distance between trajectory points in each dimension to consider them as equivalent: difference between $X$- and $Y$-coordinates less than $\epsilon$ value means that points are relatively close to each other and can be considered as equivalent. LCSS distance is increased by 1 in this case.
+	\item constant $\varepsilon$ defines the size of proximity to look for matches in terms of spatial information. According to \cite{online:r_lcss} it is a floating point number which represents the maximum allowed distance between trajectory points in each dimension to consider them as equivalent: difference between $X$- and $Y$-coordinates less than $\varepsilon$ value means that points are relatively close to each other and can be considered as equivalent. LCSS distance is increased by 1 in this case.
 \end{itemize}
 
-Parameters $\delta$ and $\epsilon$ affect results significantly, therefore, the task of choosing the optimal values for them is challenging and important \cite{inproceedings:7_related_work}\cite{inproceedings:28_lcss_dsmt}. The $Head(T)$ function is defined to return the first $M - 1$ points from the trajectory $T$, representing the trajectory with the last trajectory point removed. According to implementation given in \cite{online:r_lcss} the LCSS computation, based on a dynamic programming approach, has a complexity of $O((m + k) \delta)$. However, the algorithm requires predefined constant $\delta$ and $\varepsilon$ parameter values as an input to a method. Also, due to the recursive way of computations, LCSS has a high computational cost \cite{inproceedings:comp_sim_meas_trcl}.
+Parameters $\delta$ and $\varepsilon$ affect results significantly, therefore, the task of choosing the optimal values for them is challenging and important \cite{inproceedings:7_related_work}\cite{inproceedings:28_lcss_dsmt}. The $Head(T)$ function is defined to return the first $M - 1$ points from the trajectory $T$, representing the trajectory with the last trajectory point removed. According to the implementation given in \cite{online:r_lcss} the LCSS computation, based on a dynamic programming approach, has a complexity of $O((m + k) \delta)$. However, the algorithm requires predefined constant $\delta$ and $\varepsilon$ parameter values as an input to a method. Also, due to the recursive way of computations, LCSS has a high computational cost \cite{inproceedings:comp_sim_meas_trcl}.
 
 \subsubsection{Summary}
 
@@ -244,10 +244,10 @@ However, the disadvantage of the proposed method is that LCSS distance does not 
 
 \subsubsection{Summary}
 
-This thesis work will be intended to investigate an opportunity of increasing the accuracy of results by making epsilon and sigma parameters, which are used to calculate the sigma, adaptable and dependent on the perspective and a distance from the camera. This includes:
+This thesis work will be intended to investigate an opportunity of increasing the accuracy of results by making epsilon and delta parameters, which are used to calculate the LCSS distance, adaptable and dependent on the perspective and a distance from the camera. This includes:
 
 \begin{itemize}
 	\setlength\itemsep{0em}
-	\item exploring a functional dependency between epsilon and sigma parameters and a distance from the camera,
-	\item evaluating algorithm with different values.
+	\item exploring a functional dependency between epsilon and delta parameters and a distance from the camera,
+	\item evaluating algorithm with different values and different adaptiveness relations.
 \end{itemize}
